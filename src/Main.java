@@ -1,6 +1,10 @@
+import global.screen.MainScreen;
+import view.GameClient;
 
 public class Main {
     public static void main(String[] args) {
-        System.out.println("Hello Tetris");
+        GameClient mainClient = new GameClient();
+        mainClient.setContentPane(MainScreen.getInstance());
+        mainClient.setVisible(true);
     }
 }
