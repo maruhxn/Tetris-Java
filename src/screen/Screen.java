@@ -1,6 +1,4 @@
-package global.screen;
-
-import global.menu.BackToMainScreen;
+package screen;
 
 import javax.swing.*;
 import java.awt.*;
@@ -8,10 +6,12 @@ import java.awt.*;
 public abstract class Screen extends JPanel {
 
     public Screen() {
+
+        setFocusable(true);
         setBackground(Color.BLACK);
         setForeground(Color.white);
-        if (!(this instanceof MainScreen)) {
-            add(new BackToMainScreen());
-        }
+//        if (!(this instanceof MainScreen)) {
+//            add(new BackToMainScreen());
+//        }
     }
 }

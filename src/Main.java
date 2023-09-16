@@ -1,10 +1,10 @@
-import global.screen.MainScreen;
-import view.GameClient;
+import screen.MainScreen;
+import client.GameClient;
 
 public class Main {
     public static void main(String[] args) {
         GameClient mainClient = new GameClient();
-        mainClient.setContentPane(MainScreen.getInstance());
+        mainClient.setContentPane(new MainScreen());
         mainClient.setVisible(true);
     }
 }

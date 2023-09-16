@@ -1,9 +1,8 @@
-package global.menu;
+package menu;
 
-import global.screen.MainScreen;
-import global.screen.Screen;
+import screen.MainScreen;
+import client.GameClient;
 
-import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -17,11 +16,8 @@ public class BackToMainScreen extends Menu {
         super.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                JFrame client = extractClient();
-
-                Screen mainScreen = MainScreen.getInstance();
-                client.setContentPane(mainScreen);
-                client.validate();
+                GameClient client = (GameClient) extractClient();
+                client.switchPanel(new MainScreen());
             }
         });
     }

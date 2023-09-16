@@ -1,9 +1,8 @@
-package global.menu;
+package menu;
 
-import global.screen.ScoreboardScreen;
-import global.screen.Screen;
+import screen.ScoreboardScreen;
+import client.GameClient;
 
-import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -17,11 +16,8 @@ public class ScoreboardMenu extends Menu {
         super.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                JFrame client = extractClient();
-
-                Screen scoreboardScreen = ScoreboardScreen.getInstance();
-                client.setContentPane(scoreboardScreen);
-                client.validate();
+                GameClient client = (GameClient) extractClient();
+                client.switchPanel(new ScoreboardScreen());
             }
         });
     }

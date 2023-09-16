@@ -1,13 +1,14 @@
-package view;
+package client;
 
 import javax.swing.*;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import java.awt.*;
 
+import static constant.Constants.CLIENT_HEIGHT;
+import static constant.Constants.CLIENT_WIDTH;
+
 public class GameClient extends JFrame {
-    public static final int CLIENT_HEIGHT = 500;
-    public static final int CLIENT_WIDTH = 500;
 //    private KeyListener clientKeyListener;
 
     public GameClient() {
@@ -56,4 +57,10 @@ public class GameClient extends JFrame {
 //
 //        }
 //    }
+
+    public void switchPanel(JPanel newScreen) {
+        setContentPane(newScreen);
+        revalidate();
+        requestFocus();
+    }
 }
