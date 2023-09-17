@@ -28,8 +28,7 @@ public class Block extends Unit {
             }
         }
 
-        shape = rotatedShape;
-        System.out.println(Arrays.deepToString(shape));
+        shape = rotatedShape.clone();
     }
 
 }

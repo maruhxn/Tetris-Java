@@ -34,34 +34,34 @@ public class MainScreen extends Screen {
             add(menu);
         }
 
-        addKeyListener(new MainScreenKeyListener());
+        setKeyListener();
 
-        SwingUtilities.invokeLater(() -> {
-            menus.get(selectedIndex).requestFocusInWindow();
-            setMenuColor(Color.WHITE, Color.BLACK);
-        });
+        setMenuColor(Color.WHITE, Color.BLACK);
     }
 
-    private class MainScreenKeyListener extends KeyAdapter {
-        @Override
-        public void keyPressed(KeyEvent e) {
-            setMenuColor(Color.BLACK, Color.WHITE);
+    private void setKeyListener() {
+        this.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                setMenuColor(Color.BLACK, Color.WHITE);
 
-            switch (e.getKeyCode()) {
-                case KeyEvent.VK_DOWN:
-                    selectedIndex = Math.min(menus.size() - 1, selectedIndex + 1);
-                    break;
-                case KeyEvent.VK_UP:
-                    selectedIndex = Math.max(0, selectedIndex - 1);
-                    break;
-                case KeyEvent.VK_ENTER:
-                    menus.get(selectedIndex).doClick();
-                    break;
+                switch (e.getKeyCode()) {
+                    case KeyEvent.VK_DOWN:
+                        selectedIndex = Math.min(menus.size() - 1, selectedIndex + 1);
+                        break;
+                    case KeyEvent.VK_UP:
+                        selectedIndex = Math.max(0, selectedIndex - 1);
+                        break;
+                    case KeyEvent.VK_ENTER:
+                        menus.get(selectedIndex).doClick();
+                        removeKeyListener(this);
+                        break;
+                }
+
+                setMenuColor(Color.WHITE, Color.BLACK);
+
             }
-
-            setMenuColor(Color.WHITE, Color.BLACK);
-
-        }
+        });
     }
 
     private void setMenuColor(Color bgColor, Color textColor) {
