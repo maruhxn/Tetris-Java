@@ -62,7 +62,7 @@ public class GameScreen extends Screen {
 
     private void checkGameOver() {
         // (0, 0~400)에 블럭이 있다면 게임 오버.
-        for (int i = 0; i < GAME_AREA_WIDTH; i = i + BLOCK_CELL_WIDTH) {
+        for (int i = 0; i < GAME_AREA_WIDTH; i = i + BLOCK_CELL_SIZE) {
             if (gameArea.background[0][i] != null) {
                 timer.stop();
                 resetKeyListeners();
@@ -80,25 +80,100 @@ public class GameScreen extends Screen {
         return currBlock;
     }
 
-    private boolean checkCollision() {
-        return currBlock.getBottomEdge() == GAME_AREA_HEIGHT - BLOCK_CELL_HEIGHT || gameArea.background[currBlock.getBottomEdge()][currBlock.getX()] != null;
+    private boolean checkBottomCollision() {
+
+        if (currBlock.getBottomEdge() == GAME_AREA_HEIGHT - BLOCK_CELL_SIZE) return true;
+
+        int[][] blockShape = currBlock.getShape();
+        int w = currBlock.getWidth();
+        int h = currBlock.getHeight();
+
+        for (int i = 0; i < h; ++i) {
+            for (int j = 0; j < w; ++j) {
+                if (blockShape[i][j] == 1) {
+                    int x = currBlock.getX() + j * BLOCK_CELL_SIZE;
+                    int y = currBlock.getY() + i * BLOCK_CELL_SIZE;
+                    // 현재 y 바로 다음 칸의 background가 채워져 있다면 충돌.
+                    if (gameArea.background[y + BLOCK_CELL_SIZE][x] != null) return true;
+                }
+            }
+        }
+        return false;
     }
 
-    private boolean checkLeft() {
-        return currBlock.getLeftEdge() == 0;
+    private boolean checkLeftCollision() {
+        if (currBlock.getLeftEdge() <= 0) return true;
+
+        int[][] blockShape = currBlock.getShape();
+        int w = currBlock.getWidth();
+        int h = currBlock.getHeight();
+
+        for (int i = 0; i < h; ++i) {
+            for (int j = 0; j < w; ++j) {
+                if (blockShape[i][j] == 1) {
+                    int x = currBlock.getX() + j * BLOCK_CELL_SIZE;
+                    int y = currBlock.getY() + i * BLOCK_CELL_SIZE;
+                    if (gameArea.background[y][x - BLOCK_CELL_SIZE] != null) return true;
+                }
+            }
+        }
+
+        return false;
     }
 
-    private boolean checkRight() {
-        return currBlock.getRightEdge() == GAME_AREA_WIDTH;
+    private boolean checkRightCollision() {
+        if (currBlock.getRightEdge() >= GAME_AREA_WIDTH) return true;
+
+        int[][] blockShape = currBlock.getShape();
+        int w = currBlock.getWidth();
+        int h = currBlock.getHeight();
+
+        for (int i = 0; i < h; ++i) {
+            for (int j = 0; j < w; ++j) {
+                if (blockShape[i][j] == 1) {
+                    int x = currBlock.getX() + j * BLOCK_CELL_SIZE;
+                    int y = currBlock.getY() + i * BLOCK_CELL_SIZE;
+                    if (gameArea.background[y][x + BLOCK_CELL_SIZE] != null) return true;
+                }
+            }
+        }
+
+        return false;
     }
 
     private void rotateBlock() {
         currBlock.rotate();
+
+        int[][] blockShape = currBlock.getShape();
+        int w = currBlock.getWidth();
+        int h = currBlock.getHeight();
+
+
+        for (int i = 0; i < h; ++i) {
+            for (int j = 0; j < w; ++j) {
+                if (blockShape[i][j] == 1) {
+                    int x = currBlock.getX() + j * BLOCK_CELL_SIZE;
+                    int y = currBlock.getY() + i * BLOCK_CELL_SIZE;
+
+                    if (x < 0 || x >= GAME_AREA_WIDTH || y >= GAME_AREA_HEIGHT) {
+                        currBlock.rotateUndo();
+                        return;
+                    }
+
+                    if(gameArea.background[y][x] != null) {
+                        currBlock.rotateUndo();
+                        return;
+                    }
+                }
+            }
+        }
+
         gameArea.repaint();
+
     }
 
     private void moveDown() {
-        if (checkCollision()) {
+        if (checkBottomCollision()) {
             moveBlockToBackground();
             getNextBlockToCurr();
             return;
@@ -108,14 +183,14 @@ public class GameScreen extends Screen {
     }
 
     private void moveLeft() {
-        if (!checkLeft()) {
+        if (!checkLeftCollision()) {
             currBlock.moveLeft();
             gameArea.repaint();
         }
     }
 
     private void moveRight() {
-        if (!checkRight()) {
+        if (!checkRightCollision()) {
             currBlock.moveRight();
             gameArea.repaint();
         }
@@ -127,13 +202,12 @@ public class GameScreen extends Screen {
         int w = currBlock.getWidth();
         Color color = currBlock.getColor();
 
-        int xPos = currBlock.getX();
-        int yPos = currBlock.getY();
-
         for (int i = 0; i < h; ++i) {
             for (int j = 0; j < w; ++j) {
                 if (shape[i][j] == 1) {
-                    gameArea.background[i * BLOCK_CELL_HEIGHT + yPos][j * BLOCK_CELL_WIDTH + xPos] = color;
+                    int x = currBlock.getX() + j * BLOCK_CELL_SIZE;
+                    int y = currBlock.getY() + i * BLOCK_CELL_SIZE;
+                    gameArea.background[y][x] = color;
                 }
             }
         }
@@ -142,12 +216,12 @@ public class GameScreen extends Screen {
     private void superDrop() {
         int startY = currBlock.getY();
         int endY;
-        while (!checkCollision()) {
-            currBlock.setY(currBlock.getY() + BLOCK_CELL_HEIGHT);
+        while (!checkBottomCollision()) {
+            currBlock.moveDown();
         }
         endY = currBlock.getY();
 
-        int addedScore = (endY - startY) / BLOCK_CELL_HEIGHT * ScoreManager.getScorePerSecond();
+        int addedScore = (endY - startY) / BLOCK_CELL_SIZE * ScoreManager.getScorePerSecond();
         ScoreManager.addScore(addedScore);
         moveBlockToBackground();
         gameArea.repaint();

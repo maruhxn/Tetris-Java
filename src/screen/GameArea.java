@@ -1,10 +1,10 @@
 package screen;
 
+import constant.Constants;
 import unit.block.Block;
 
 import javax.swing.*;
 import java.awt.*;
-import java.sql.SQLOutput;
 
 import static constant.Constants.*;
 
@@ -39,8 +39,8 @@ public class GameArea extends JPanel {
         for (int i = 0; i < h; ++i) {
             for (int j = 0; j < w; ++j) {
                 if (blockShape[i][j] == 1) {
-                    int x = currBlock.getX() + j * BLOCK_CELL_WIDTH;
-                    int y = currBlock.getY() + i * BLOCK_CELL_HEIGHT;
+                    int x = currBlock.getX() + j * BLOCK_CELL_SIZE;
+                    int y = currBlock.getY() + i * BLOCK_CELL_SIZE;
 
                     drawBlockByGraphics(g, color, x, y);
                 }
@@ -56,8 +56,8 @@ public class GameArea extends JPanel {
     private void drawBackground(Graphics g) {
         Color color;
 
-        for (int i = 0; i < GAME_AREA_HEIGHT; i = i + BLOCK_CELL_HEIGHT) {
-            for (int j = 0; j < GAME_AREA_WIDTH; j = j + BLOCK_CELL_HEIGHT) {
+        for (int i = 0; i < GAME_AREA_HEIGHT; i = i + BLOCK_CELL_SIZE) {
+            for (int j = 0; j < GAME_AREA_WIDTH; j = j + BLOCK_CELL_SIZE) {
                 color = background[i][j];
                 if (color != null) {
                     drawBlockByGraphics(g, color, j, i);
@@ -68,9 +68,9 @@ public class GameArea extends JPanel {
 
     private static void drawBlockByGraphics(Graphics g, Color color, int x, int y) {
         g.setColor(color);
-        g.fillRect(x, y, BLOCK_CELL_HEIGHT, BLOCK_CELL_WIDTH);
+        g.fillRect(x, y, BLOCK_CELL_SIZE, BLOCK_CELL_SIZE);
         g.setColor(Color.BLACK);
-        g.drawRect(x, y, BLOCK_CELL_HEIGHT, BLOCK_CELL_WIDTH);
+        g.drawRect(x, y, BLOCK_CELL_SIZE, BLOCK_CELL_SIZE);
     }
 
 }

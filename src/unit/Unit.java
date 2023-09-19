@@ -1,5 +1,7 @@
 package unit;
 
+import constant.Constants;
+
 import java.awt.*;
 
 import static constant.Constants.*;
@@ -22,11 +24,6 @@ public abstract class Unit {
     public int getX() {
         return x;
     }
-
-    public void setX(int x) {
-        this.x = x;
-    }
-
     public int getY() {
         return y;
     }
@@ -57,7 +54,7 @@ public abstract class Unit {
     }
 
     public int getBottomEdge() {
-        return y + getHeight() * BLOCK_CELL_HEIGHT;
+        return y + getHeight() * Constants.BLOCK_CELL_SIZE;
     }
 
     public int getLeftEdge() {
@@ -65,18 +62,18 @@ public abstract class Unit {
     }
 
     public int getRightEdge() {
-        return x + (getWidth() * BLOCK_CELL_WIDTH);
+        return x + (getWidth() * BLOCK_CELL_SIZE);
     }
 
     public void moveDown() {
-        this.y = y + BLOCK_CELL_HEIGHT;
+        this.y = y + Constants.BLOCK_CELL_SIZE;
     }
 
     public void moveLeft() {
-        this.x = x - BLOCK_CELL_WIDTH;
+        this.x = x - BLOCK_CELL_SIZE;
     }
 
     public void moveRight() {
-        this.x = x + BLOCK_CELL_WIDTH;
+        this.x = x + BLOCK_CELL_SIZE;
     }
 }

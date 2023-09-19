@@ -1,5 +1,6 @@
 package screen;
 
+import constant.Constants;
 import score.ScoreManager;
 import unit.block.Block;
 
@@ -43,12 +44,12 @@ public class GameInfoArea extends JPanel {
                 int blockHeight = nextBlock.getHeight();
                 g2d.setColor(nextBlock.getColor());
 
-                int middleX = NEXT_BLOCK_AREA_WIDTH / 2 - (blockWidth - 1) * BLOCK_CELL_WIDTH;
-                int middleY = NEXT_BLOCK_AREA_HEIGHT / 2 - (blockHeight - 1) * BLOCK_CELL_HEIGHT;
+                int middleX = NEXT_BLOCK_AREA_WIDTH / 2 - (blockWidth - 1) * BLOCK_CELL_SIZE;
+                int middleY = NEXT_BLOCK_AREA_HEIGHT / 2 - (blockHeight - 1) * Constants.BLOCK_CELL_SIZE;
                 for (int i = 0; i < blockHeight; ++i) {
                     for (int j = 0; j < blockWidth; ++j) {
                         if (blockShape[i][j] == 1)
-                            g2d.fillRect(middleX + j * BLOCK_CELL_WIDTH, middleY + i * BLOCK_CELL_HEIGHT, BLOCK_CELL_HEIGHT, BLOCK_CELL_WIDTH);
+                            g2d.fillRect(middleX + j * BLOCK_CELL_SIZE, middleY + i * Constants.BLOCK_CELL_SIZE, Constants.BLOCK_CELL_SIZE, BLOCK_CELL_SIZE);
                     }
                 }
             }
