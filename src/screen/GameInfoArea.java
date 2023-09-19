@@ -1,7 +1,7 @@
 package screen;
 
 import constant.Constants;
-import score.ScoreManager;
+import manager.GameManager;
 import unit.block.Block;
 
 import javax.swing.*;
@@ -76,8 +76,8 @@ public class GameInfoArea extends JPanel {
         @Override
         public void paint(Graphics g) {
             super.paint(g);
-            scoreLabel.setText(String.valueOf(ScoreManager.getScore()));
-            levelLable.setText("LEVEL : " + String.valueOf(ScoreManager.getLevel()));
+            scoreLabel.setText(String.valueOf(GameManager.getScore()));
+            levelLable.setText("LEVEL : " + String.valueOf(GameManager.getLevel()));
         }
     }
 }

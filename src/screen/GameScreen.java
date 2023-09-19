@@ -1,6 +1,6 @@
 package screen;
 
-import score.ScoreManager;
+import manager.GameManager;
 import unit.block.*;
 
 import javax.swing.*;
@@ -17,6 +17,8 @@ public class GameScreen extends Screen {
     private Block nextBlock;
     private Timer timer;
     private boolean isPaused = false;
+
+    private int blockSpawnCnt;
 
 
     public GameScreen() {
@@ -54,10 +56,43 @@ public class GameScreen extends Screen {
 
     private void blockDownCycle() {
         moveDown();
-        ScoreManager.checkLevelUp();
+        GameManager.checkLevelUp();
         checkGameOver();
         gameArea.repaint();
         gameInfoArea.repaint();
+    }
+
+    private void checkClearLine() {
+        for (int y = GAME_AREA_HEIGHT - BLOCK_CELL_SIZE; y > 0; y -= BLOCK_CELL_SIZE) {
+            int clearedColumnCnt = 0;
+            for (int x = 0; x < GAME_AREA_WIDTH; x += BLOCK_CELL_SIZE) {
+                if (gameArea.background[y][x] == null) break;
+                clearedColumnCnt++;
+            }
+
+            if (clearedColumnCnt == GAME_AREA_WIDTH / BLOCK_CELL_SIZE) {
+                y = clearLine(y);
+            }
+        }
+    }
+
+    private int clearLine(int y) {
+        gameArea.background[y] = new Color[GAME_AREA_WIDTH];
+        for (int i = y; i > 0; i -= BLOCK_CELL_SIZE) {
+            gameArea.background[i] = gameArea.background[i - BLOCK_CELL_SIZE];
+        }
+        y += BLOCK_CELL_SIZE;
+        speedUp();
+        gameArea.repaint();
+        gameInfoArea.repaint();
+        return y;
+    }
+
+    private void speedUp() {
+        GameManager.speedUp();
+        timer.setDelay(GameManager.getBlockDownSpeed());
+        System.out.println("SPEED UP!!");
+        System.out.println(GameManager.getBlockDownSpeed());
     }
 
     private void checkGameOver() {
@@ -66,7 +101,7 @@ public class GameScreen extends Screen {
             if (gameArea.background[0][i] != null) {
                 timer.stop();
                 resetKeyListeners();
-                // 게임 종료 다이얼 띄우기
+                // TODO: 게임 종료 다이얼 띄우기
 
             }
         }
@@ -160,7 +195,7 @@ public class GameScreen extends Screen {
                         return;
                     }
 
-                    if(gameArea.background[y][x] != null) {
+                    if (gameArea.background[y][x] != null) {
                         currBlock.rotateUndo();
                         return;
                     }
@@ -175,11 +210,12 @@ public class GameScreen extends Screen {
     private void moveDown() {
         if (checkBottomCollision()) {
             moveBlockToBackground();
+            checkClearLine();
             getNextBlockToCurr();
             return;
         }
         currBlock.moveDown();
-        ScoreManager.addScorePerSecond();
+        GameManager.addScorePerSecond();
     }
 
     private void moveLeft() {
@@ -221,8 +257,8 @@ public class GameScreen extends Screen {
         }
         endY = currBlock.getY();
 
-        int addedScore = (endY - startY) / BLOCK_CELL_SIZE * ScoreManager.getScorePerSecond();
-        ScoreManager.addScore(addedScore);
+        int addedScore = (endY - startY) / BLOCK_CELL_SIZE * GameManager.getScorePerSecond();
+        GameManager.addScore(addedScore);
         moveBlockToBackground();
         gameArea.repaint();
     }
@@ -287,11 +323,17 @@ public class GameScreen extends Screen {
     private void init() {
         spawnNextBlock();
         getNextBlockToCurr();
+        blockSpawnCnt = 0;
     }
 
     private void getNextBlockToCurr() {
         setCurrBlock(getNextBlock());
         spawnNextBlock();
+        blockSpawnCnt++;
+        if (blockSpawnCnt == GameManager.getSpeedUpConditionBlockSpawnCount()) {
+            blockSpawnCnt = 0;
+            speedUp();
+        }
     }
 
     private void spawnNextBlock() {
