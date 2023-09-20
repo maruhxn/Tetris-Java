@@ -11,6 +11,4 @@ public class Constants {
     public static final int NEXT_BLOCK_AREA_WIDTH = CLIENT_WIDTH - GAME_AREA_WIDTH;
 
     public static final int NEXT_BLOCK_AREA_HEIGHT = 200;
-
-    public static int SCORE_PER_SECOND = 10;
 }

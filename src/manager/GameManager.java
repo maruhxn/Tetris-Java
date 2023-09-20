@@ -43,6 +43,10 @@ public class GameManager {
         return score;
     }
 
+    public static void resetScore() {
+        GameManager.score = 0;
+    }
+
     public static void addScore(int addedScore) {
         score += addedScore;
     }

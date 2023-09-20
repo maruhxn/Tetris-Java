@@ -1,5 +1,6 @@
 package screen;
 
+import client.GameClient;
 import manager.GameManager;
 import unit.block.*;
 
@@ -7,6 +8,9 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.Random;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import static constant.Constants.*;
 
@@ -91,8 +95,6 @@ public class GameScreen extends Screen {
     private void speedUp() {
         GameManager.speedUp();
         timer.setDelay(GameManager.getBlockDownSpeed());
-        System.out.println("SPEED UP!!");
-        System.out.println(GameManager.getBlockDownSpeed());
     }
 
     private void checkGameOver() {
@@ -100,9 +102,17 @@ public class GameScreen extends Screen {
         for (int i = 0; i < GAME_AREA_WIDTH; i = i + BLOCK_CELL_SIZE) {
             if (gameArea.background[0][i] != null) {
                 timer.stop();
+                ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
                 resetKeyListeners();
-                // TODO: 게임 종료 다이얼 띄우기
 
+                Runnable task = new Runnable() {
+                    @Override
+                    public void run() {
+                        GameClient client = (GameClient) getTopLevelAncestor();
+                        client.switchPanel(new GameOverScreen());
+                    }
+                };
+                scheduler.schedule(task, 3, TimeUnit.SECONDS);
             }
         }
     }
