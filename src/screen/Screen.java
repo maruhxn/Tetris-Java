@@ -10,8 +10,5 @@ public abstract class Screen extends JPanel {
         setFocusable(true);
         setBackground(Color.BLACK);
         setForeground(Color.white);
-//        if (!(this instanceof MainScreen)) {
-//            add(new BackToMainScreen());
-//        }
     }
 }

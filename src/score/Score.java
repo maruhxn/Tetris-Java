@@ -1,25 +1,43 @@
 package score;
 
+import java.sql.Timestamp;
+
 public class Score {
-    private int score;
-    private static Score instance; // 싱글톤 인스턴스
+    int id;
+    String name;
+    long score;
+    Timestamp createdAt;
 
-    private Score(int score) {
-        this.score = score;
+
+    public int getId() {
+        return id;
     }
 
-    public static Score getInstance(int score) {
-        if (instance == null) {
-            instance = new Score(score);
-        }
-        return instance;
+    public void setId(int id) {
+        this.id = id;
     }
 
-    public int getScore() {
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public long getScore() {
         return score;
     }
 
-    public void setScore(int score) {
+    public void setScore(long score) {
         this.score = score;
+    }
+
+    public Timestamp getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Timestamp createdAt) {
+        this.createdAt = createdAt;
     }
 }

@@ -1,9 +1,10 @@
 package unit;
 
+import constant.Constants;
+
 import java.awt.*;
 
-import static constant.Constants.BLOCK_CELL_HEIGHT;
-import static constant.Constants.GAME_AREA_WIDTH;
+import static constant.Constants.*;
 
 public abstract class Unit {
 
@@ -23,11 +24,6 @@ public abstract class Unit {
     public int getX() {
         return x;
     }
-
-    public void setX(int x) {
-        this.x = x;
-    }
-
     public int getY() {
         return y;
     }
@@ -48,10 +44,6 @@ public abstract class Unit {
         return shape;
     }
 
-    public void setShape(int[][] shape) {
-        this.shape = shape;
-    }
-
     public int getHeight() {
         return shape.length;
     }
@@ -61,7 +53,27 @@ public abstract class Unit {
         return 0;
     }
 
+    public int getBottomEdge() {
+        return y + getHeight() * Constants.BLOCK_CELL_SIZE;
+    }
+
+    public int getLeftEdge() {
+        return x;
+    }
+
+    public int getRightEdge() {
+        return x + (getWidth() * BLOCK_CELL_SIZE);
+    }
+
     public void moveDown() {
-        this.y = y + BLOCK_CELL_HEIGHT;
+        this.y = y + Constants.BLOCK_CELL_SIZE;
+    }
+
+    public void moveLeft() {
+        this.x = x - BLOCK_CELL_SIZE;
+    }
+
+    public void moveRight() {
+        this.x = x + BLOCK_CELL_SIZE;
     }
 }

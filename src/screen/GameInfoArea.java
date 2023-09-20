@@ -1,7 +1,7 @@
 package screen;
 
-import score.Score;
-import screen.GameScreen;
+import constant.Constants;
+import manager.GameManager;
 import unit.block.Block;
 
 import javax.swing.*;
@@ -34,26 +34,32 @@ public class GameInfoArea extends JPanel {
         @Override
         public void paint(Graphics g) {
             super.paint(g);
+            Component gameInfoArea = ((GameInfoArea) getParent());
+            nextBlock = ((GameScreen) gameInfoArea.getParent()).getNextBlock();
             Graphics2D g2d = (Graphics2D) g;
 
-            int[][] blockShape = nextBlock.getShape();
-            int blockWidth = nextBlock.getWidth();
-            int blockHeight = nextBlock.getHeight();
-            g2d.setColor(nextBlock.getColor());
+            if(nextBlock != null) {
+                int[][] blockShape = nextBlock.getShape();
+                int blockWidth = nextBlock.getWidth();
+                int blockHeight = nextBlock.getHeight();
+                g2d.setColor(nextBlock.getColor());
 
-            int middleX = NEXT_BLOCK_AREA_WIDTH / 2 - (blockWidth - 1) * BLOCK_CELL_WIDTH;
-            int middleY = NEXT_BLOCK_AREA_HEIGHT / 2 - (blockHeight - 1) * BLOCK_CELL_HEIGHT;
-            for (int i = 0; i < blockHeight; ++i) {
-                for (int j = 0; j < blockWidth; ++j) {
-                    if (blockShape[i][j] == 1)
-                        g2d.fillRect(middleX + j * BLOCK_CELL_WIDTH, middleY + i * BLOCK_CELL_HEIGHT, BLOCK_CELL_HEIGHT, BLOCK_CELL_WIDTH);
+                int middleX = NEXT_BLOCK_AREA_WIDTH / 2 - (blockWidth - 1) * BLOCK_CELL_SIZE;
+                int middleY = NEXT_BLOCK_AREA_HEIGHT / 2 - (blockHeight - 1) * Constants.BLOCK_CELL_SIZE;
+                for (int i = 0; i < blockHeight; ++i) {
+                    for (int j = 0; j < blockWidth; ++j) {
+                        if (blockShape[i][j] == 1)
+                            g2d.fillRect(middleX + j * BLOCK_CELL_SIZE, middleY + i * Constants.BLOCK_CELL_SIZE, Constants.BLOCK_CELL_SIZE, BLOCK_CELL_SIZE);
+                    }
                 }
             }
+
         }
     }
 
     public class ScoreArea extends JPanel {
         private JLabel scoreLabel;
+        private JLabel levelLable;
         public ScoreArea() {
             LineBorder border = (LineBorder) BorderFactory.createLineBorder(Color.DARK_GRAY, 5);
             setBorder(border);
@@ -61,16 +67,17 @@ public class GameInfoArea extends JPanel {
             setBackground(Color.GRAY);
 
             scoreLabel = new JLabel("0");
+            levelLable = new JLabel();
 
             add(scoreLabel);
+            add(levelLable);
         }
 
         @Override
         public void paint(Graphics g) {
             super.paint(g);
-            scoreLabel.setText(String.valueOf(Score.getInstance(0).getScore()));
+            scoreLabel.setText(String.valueOf(GameManager.getScore()));
+            levelLable.setText("LEVEL : " + String.valueOf(GameManager.getLevel()));
         }
-
-
     }
 }
