@@ -4,6 +4,7 @@ import client.GameClient;
 import constant.Constants;
 import menu.Button;
 import menu.Label;
+import score.ScoreDao;
 
 import javax.swing.*;
 import javax.swing.border.LineBorder;
@@ -177,7 +178,33 @@ public class SettingScreen extends Screen {
         public ResetArea() {
             setLayout(new GridLayout(2, 1));
             scoreBoardResetBtn = new Button("스코어보드 초기화");
+            scoreBoardResetBtn.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    int result = JOptionPane.showConfirmDialog(resetArea, "점수를 초기화 하시겠습니까?", "확인", JOptionPane.YES_NO_OPTION);
+
+                    if (result == JOptionPane.YES_OPTION) {
+                        ScoreDao scoreDao = new ScoreDao();
+                        scoreDao.deleteAllScores();
+                        JOptionPane.showMessageDialog(resetArea, "점수 초기화 완료");
+                    }
+
+                }
+            });
             settingResetBtn = new Button("설정 초기화");
+            settingResetBtn.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    int result = JOptionPane.showConfirmDialog(resetArea, "설정을 초기화 하시겠습니까?", "확인", JOptionPane.YES_NO_OPTION);
+
+                    if (result == JOptionPane.YES_OPTION) {
+                        // 사이즈 small로 설정
+                        // 키는 모두 기본 키로 설정
+                        JOptionPane.showMessageDialog(resetArea, "설정 초기화 완료");
+                    }
+
+                }
+            });
 
             add(scoreBoardResetBtn);
             add(settingResetBtn);
