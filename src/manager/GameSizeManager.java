@@ -3,34 +3,57 @@ package manager;
 public class GameSizeManager {
     public static final int WINDOW_BORDER = 16;
     public static final int WINDOW_MANAGER_HEIGHT = 39;
-    public static int CLIENT_WIDTH = 600; // 300 / 600 / 750
-    public static int CLIENT_HEIGHT = 800; // 400 / 800 / 1000
 
-    public static int BLOCK_CELL_SIZE = 40; // 20 / 40 / 50
-    public static int INFO_AREA_WIDTH = 200; // 100 / 200 / 250
-    public static int GAME_AREA_WIDTH = CLIENT_WIDTH - INFO_AREA_WIDTH;
+    public enum GameSize {
+        SMALL(300, 400, 20, 100, 200), MEDIUM(600, 800, 40, 200, 400), LARGE(750, 1000, 50, 250, 500);
+
+        private final int width;
+        private final int height;
+        private final int blockCellSize;
+        private final int infoAreaWidth;
+        private final int gameAreaWidth;
+
+        GameSize(int width, int height, int blockCellSize, int infoAreaWidth, int gameAreaWidth) {
+            this.width = width;
+            this.height = height;
+            this.blockCellSize = blockCellSize;
+            this.infoAreaWidth = infoAreaWidth;
+            this.gameAreaWidth = gameAreaWidth;
+        }
+
+        public int getWidth() {
+            return width;
+        }
+
+        public int getHeight() {
+            return height;
+        }
+
+        public int getBlockCellSize() {
+            return blockCellSize;
+        }
+
+        public int getInfoAreaWidth() {
+            return infoAreaWidth;
+        }
+
+        public int getGameAreaWidth() {
+            return gameAreaWidth;
+        }
+    }
+
+    public static GameSize GAME_SIZE = GameSize.MEDIUM;
 
     public static void setClientSmall() {
-        CLIENT_WIDTH = 300;
-        CLIENT_HEIGHT = 400;
-        BLOCK_CELL_SIZE = 20;
-        INFO_AREA_WIDTH = 100;
-        GAME_AREA_WIDTH = CLIENT_WIDTH - INFO_AREA_WIDTH;
+        GAME_SIZE = GameSize.SMALL;
     }
 
     public static void setClientMedium() {
-        CLIENT_WIDTH = 600;
-        CLIENT_HEIGHT = 800;
-        BLOCK_CELL_SIZE = 40;
-        INFO_AREA_WIDTH = 200;
-        GAME_AREA_WIDTH = CLIENT_WIDTH - INFO_AREA_WIDTH;
+        GAME_SIZE = GameSize.MEDIUM;
     }
 
     public static void setClientLarge() {
-        CLIENT_WIDTH = 750;
-        CLIENT_HEIGHT = 1000;
-        BLOCK_CELL_SIZE = 50;
-        INFO_AREA_WIDTH = 250;
-        GAME_AREA_WIDTH = CLIENT_WIDTH - INFO_AREA_WIDTH;
+        GAME_SIZE = GameSize.LARGE;
     }
+
 }

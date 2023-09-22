@@ -7,12 +7,13 @@ import java.awt.*;
 
 import static manager.GameSizeManager.*;
 
+
 public class GameClient extends JFrame {
     public GameClient() {
 
         // JFrame Setting
         super("TETRIS");
-        setSize(CLIENT_WIDTH + WINDOW_BORDER, CLIENT_HEIGHT + WINDOW_MANAGER_HEIGHT);
+        setSize(GAME_SIZE.getWidth() + WINDOW_BORDER, GAME_SIZE.getHeight() + WINDOW_MANAGER_HEIGHT);
         setBackground(Color.BLACK);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);

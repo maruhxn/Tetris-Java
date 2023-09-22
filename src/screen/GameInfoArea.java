@@ -13,7 +13,7 @@ public class GameInfoArea extends JPanel {
     private Block nextBlock;
 
     public GameInfoArea() {
-        setPreferredSize(new Dimension(INFO_AREA_WIDTH, CLIENT_HEIGHT));
+        setPreferredSize(new Dimension(GAME_SIZE.getInfoAreaWidth(), GAME_SIZE.getHeight()));
         setLayout(new GridLayout(0, 1));
         setBackground(Color.BLUE);
         add(new NextBlockArea());
@@ -42,13 +42,13 @@ public class GameInfoArea extends JPanel {
                 int blockWidth = nextBlock.getWidth();
                 int blockHeight = nextBlock.getHeight();
                 g2d.setColor(nextBlock.getColor());
-
-                int middleX = getWidth() / 2 - (blockWidth - 2) * BLOCK_CELL_SIZE;
-                int middleY = INFO_AREA_WIDTH / 2 - (blockHeight - 1) * BLOCK_CELL_SIZE;
+                
+                int middleX = getWidth() / 2 - (blockWidth - 2) * GAME_SIZE.getBlockCellSize();
+                int middleY = GAME_SIZE.getInfoAreaWidth() / 2 - (blockHeight - 1) * GAME_SIZE.getBlockCellSize();
                 for (int i = 0; i < blockHeight; ++i) {
                     for (int j = 0; j < blockWidth; ++j) {
                         if (blockShape[i][j] == 1)
-                            g2d.fillRect(middleX + j * BLOCK_CELL_SIZE, middleY + i * BLOCK_CELL_SIZE, BLOCK_CELL_SIZE, BLOCK_CELL_SIZE);
+                            g2d.fillRect(middleX + j * GAME_SIZE.getBlockCellSize(), middleY + i * GAME_SIZE.getBlockCellSize(), GAME_SIZE.getBlockCellSize(), GAME_SIZE.getBlockCellSize());
                     }
                 }
             }

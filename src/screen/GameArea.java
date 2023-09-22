@@ -5,16 +5,16 @@ import unit.block.Block;
 import javax.swing.*;
 import java.awt.*;
 
-import static manager.GameSizeManager.*;
+import static manager.GameSizeManager.GAME_SIZE;
 
 public class GameArea extends JPanel {
     private Block currBlock;
     public Color[][] background;
 
     public GameArea() {
-        setPreferredSize(new Dimension(GAME_AREA_WIDTH, CLIENT_HEIGHT));
+        setPreferredSize(new Dimension(GAME_SIZE.getGameAreaWidth(), GAME_SIZE.getHeight()));
         setBackground(Color.BLACK);
-        background = new Color[CLIENT_HEIGHT][GAME_AREA_WIDTH];
+        background = new Color[GAME_SIZE.getHeight()][GAME_SIZE.getGameAreaWidth()];
 
         SwingUtilities.invokeLater(() -> {
             this.currBlock = ((GameScreen) getParent()).getCurrBlock();
@@ -38,8 +38,8 @@ public class GameArea extends JPanel {
         for (int i = 0; i < h; ++i) {
             for (int j = 0; j < w; ++j) {
                 if (blockShape[i][j] == 1) {
-                    int x = currBlock.getX() + j * BLOCK_CELL_SIZE;
-                    int y = currBlock.getY() + i * BLOCK_CELL_SIZE;
+                    int x = currBlock.getX() + j * GAME_SIZE.getBlockCellSize();
+                    int y = currBlock.getY() + i * GAME_SIZE.getBlockCellSize();
 
                     drawBlockByGraphics(g, color, x, y);
                 }
@@ -49,14 +49,14 @@ public class GameArea extends JPanel {
         // STATUS TEXT
         g.setColor(Color.WHITE);
         g.setFont(new Font("Courier", Font.BOLD, 24));
-        g.drawString(((GameScreen) getParent()).setStatus() ? "PAUSE!!" : "PLAYING!", GAME_AREA_WIDTH / 2 - 50, 20);
+        g.drawString(((GameScreen) getParent()).setStatus() ? "PAUSE!!" : "PLAYING!", GAME_SIZE.getGameAreaWidth() / 2 - 50, 20);
     }
 
     private void drawBackground(Graphics g) {
         Color color;
 
-        for (int i = 0; i < CLIENT_HEIGHT; i = i + BLOCK_CELL_SIZE) {
-            for (int j = 0; j < GAME_AREA_WIDTH; j = j + BLOCK_CELL_SIZE) {
+        for (int i = 0; i < GAME_SIZE.getHeight(); i = i + GAME_SIZE.getBlockCellSize()) {
+            for (int j = 0; j < GAME_SIZE.getGameAreaWidth(); j = j + GAME_SIZE.getBlockCellSize()) {
                 color = background[i][j];
                 if (color != null) {
                     drawBlockByGraphics(g, color, j, i);
@@ -67,9 +67,9 @@ public class GameArea extends JPanel {
 
     private static void drawBlockByGraphics(Graphics g, Color color, int x, int y) {
         g.setColor(color);
-        g.fillRect(x, y, BLOCK_CELL_SIZE, BLOCK_CELL_SIZE);
+        g.fillRect(x, y, GAME_SIZE.getBlockCellSize(), GAME_SIZE.getBlockCellSize());
         g.setColor(Color.BLACK);
-        g.drawRect(x, y, BLOCK_CELL_SIZE, BLOCK_CELL_SIZE);
+        g.drawRect(x, y, GAME_SIZE.getBlockCellSize(), GAME_SIZE.getBlockCellSize());
     }
 
 }

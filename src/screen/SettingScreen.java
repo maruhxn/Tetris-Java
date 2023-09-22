@@ -107,7 +107,7 @@ public class SettingScreen extends Screen {
 
         private void resizeClient() {
             GameClient client = (GameClient) getTopLevelAncestor();
-            client.setSize(CLIENT_WIDTH + WINDOW_BORDER, CLIENT_HEIGHT + WINDOW_MANAGER_HEIGHT);
+            client.setSize(GAME_SIZE.getWidth() + WINDOW_BORDER, GAME_SIZE.getHeight() + WINDOW_MANAGER_HEIGHT);
             client.revalidate();
         }
     }
