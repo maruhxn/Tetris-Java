@@ -2,8 +2,8 @@ package unit;
 
 import java.awt.*;
 
-import static constant.Constants.BLOCK_CELL_SIZE;
-import static constant.Constants.GAME_AREA_WIDTH;
+import static manager.GameSizeManager.BLOCK_CELL_SIZE;
+import static manager.GameSizeManager.GAME_AREA_WIDTH;
 
 public abstract class Unit {
 

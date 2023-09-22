@@ -5,7 +5,7 @@ import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import java.awt.*;
 
-import static constant.Constants.*;
+import static manager.GameSizeManager.*;
 
 public class GameClient extends JFrame {
     public GameClient() {

@@ -7,7 +7,7 @@ import javax.swing.*;
 import javax.swing.border.LineBorder;
 import java.awt.*;
 
-import static constant.Constants.*;
+import static manager.GameSizeManager.*;
 
 public class GameInfoArea extends JPanel {
     private Block nextBlock;

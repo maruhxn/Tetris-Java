@@ -1,6 +1,7 @@
 package screen;
 
 import client.GameClient;
+import manager.GameKeyManager;
 import manager.GameManager;
 import unit.block.*;
 
@@ -12,7 +13,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-import static constant.Constants.*;
+import static manager.GameSizeManager.*;
 
 public class GameScreen extends Screen {
     public final GameArea gameArea;
@@ -282,29 +283,22 @@ public class GameScreen extends Screen {
         this.addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
-                switch (e.getKeyCode()) {
-                    case KeyEvent.VK_LEFT:
-                        moveLeft();
-                        break;
-                    case KeyEvent.VK_RIGHT:
-                        moveRight();
-                        break;
-                    case KeyEvent.VK_DOWN:
-                        blockDownCycle();
-                        break;
-                    case KeyEvent.VK_SPACE:
-                        superDrop();
-                        break;
-                    case KeyEvent.VK_SHIFT:
-                        rotateBlock();
-                        break;
-                    case KeyEvent.VK_P:
-                        pause();
-                        break;
-                    case KeyEvent.VK_ESCAPE:
-                        forceExit();
-                        break;
-                }
+                int gameOverKey = GameKeyManager.getGameOverKey();
+                int moveLeftKey = GameKeyManager.getMoveLeftKey();
+                int moveDownKey = GameKeyManager.getMoveDownKey();
+                int moveRightKey = GameKeyManager.getMoveRightKey();
+                int pauseKey = GameKeyManager.getPauseKey();
+                int rotateKey = GameKeyManager.getRotateKey();
+                int superDropKey = GameKeyManager.getSuperDropKey();
+
+                if (e.getKeyCode() == moveLeftKey) moveLeft();
+                else if (e.getKeyCode() == moveRightKey) moveRight();
+                else if (e.getKeyCode() == moveDownKey) blockDownCycle();
+                else if (e.getKeyCode() == superDropKey) superDrop();
+                else if (e.getKeyCode() == rotateKey) rotateBlock();
+                else if (e.getKeyCode() == pauseKey) pause();
+                else if (e.getKeyCode() == gameOverKey) forceExit();
+
             }
         });
     }
@@ -324,7 +318,7 @@ public class GameScreen extends Screen {
             addKeyListener(new KeyAdapter() {
                 @Override
                 public void keyPressed(KeyEvent e) {
-                    if (e.getKeyCode() == KeyEvent.VK_P) {
+                    if (e.getKeyCode() == GameKeyManager.getPauseKey()) {
                         pause();
                     }
                 }

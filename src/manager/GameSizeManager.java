@@ -1,13 +1,13 @@
-package constant;
+package manager;
 
-public class Constants {
+public class GameSizeManager {
     public static final int WINDOW_BORDER = 16;
     public static final int WINDOW_MANAGER_HEIGHT = 39;
-    public static int CLIENT_WIDTH = 300; // 300 / 600 / 750
-    public static int CLIENT_HEIGHT = 400; // 400 / 800 / 1000
+    public static int CLIENT_WIDTH = 600; // 300 / 600 / 750
+    public static int CLIENT_HEIGHT = 800; // 400 / 800 / 1000
 
-    public static int BLOCK_CELL_SIZE = 20; // 20 / 40 / 50
-    public static int INFO_AREA_WIDTH = 100; // 100 / 200 / 250
+    public static int BLOCK_CELL_SIZE = 40; // 20 / 40 / 50
+    public static int INFO_AREA_WIDTH = 200; // 100 / 200 / 250
     public static int GAME_AREA_WIDTH = CLIENT_WIDTH - INFO_AREA_WIDTH;
 
     public static void setClientSmall() {

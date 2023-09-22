@@ -5,7 +5,7 @@ import unit.block.Block;
 import javax.swing.*;
 import java.awt.*;
 
-import static constant.Constants.*;
+import static manager.GameSizeManager.*;
 
 public class GameArea extends JPanel {
     private Block currBlock;
