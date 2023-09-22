@@ -2,7 +2,6 @@ package screen;
 
 import client.GameClient;
 import manager.GameKeyManager;
-import manager.GameKeys;
 import manager.GameSizeManager;
 import menu.Button;
 import menu.Label;
@@ -162,13 +161,13 @@ public class SettingScreen extends Screen {
 
                 setLayout(new GridLayout(0, 2));
 
-                keyItemList.add(new KeyItem("블럭 회전", GameKeyManager.getRotateKey(), GameKeys.ROTATE_KEY));
-                keyItemList.add(new KeyItem("게임 일시 정지", GameKeyManager.getPauseKey(), GameKeys.PAUSE_KEY));
-                keyItemList.add(new KeyItem("블럭 좌측 이동", GameKeyManager.getMoveLeftKey(), GameKeys.MOVE_LEFT_KEY));
-                keyItemList.add(new KeyItem("블럭 우측 이동", GameKeyManager.getMoveRightKey(), GameKeys.MOVE_RIGHT_KEY));
-                keyItemList.add(new KeyItem("블럭 하강", GameKeyManager.getMoveDownKey(), GameKeys.MOVE_DOWN_KEY));
-                keyItemList.add(new KeyItem("게임 종료", GameKeyManager.getGameOverKey(), GameKeys.GAME_OVER_KEY));
-                keyItemList.add(new KeyItem("슈퍼 드롭", GameKeyManager.getSuperDropKey(), GameKeys.SUPER_DROP_KEY));
+                keyItemList.add(new KeyItem("블럭 회전", GameKeyManager.getRotateKey(), GameKeyManager.GameKeys.ROTATE_KEY));
+                keyItemList.add(new KeyItem("게임 일시 정지", GameKeyManager.getPauseKey(), GameKeyManager.GameKeys.PAUSE_KEY));
+                keyItemList.add(new KeyItem("블럭 좌측 이동", GameKeyManager.getMoveLeftKey(), GameKeyManager.GameKeys.MOVE_LEFT_KEY));
+                keyItemList.add(new KeyItem("블럭 우측 이동", GameKeyManager.getMoveRightKey(), GameKeyManager.GameKeys.MOVE_RIGHT_KEY));
+                keyItemList.add(new KeyItem("블럭 하강", GameKeyManager.getMoveDownKey(), GameKeyManager.GameKeys.MOVE_DOWN_KEY));
+                keyItemList.add(new KeyItem("게임 종료", GameKeyManager.getGameOverKey(), GameKeyManager.GameKeys.GAME_OVER_KEY));
+                keyItemList.add(new KeyItem("슈퍼 드롭", GameKeyManager.getSuperDropKey(), GameKeyManager.GameKeys.SUPER_DROP_KEY));
 
                 for (KeyItem k : keyItemList) {
                     add(k);
@@ -183,9 +182,9 @@ public class SettingScreen extends Screen {
             public class KeyItem extends JPanel {
                 JLabel label;
                 JTextField field;
-                int keyCode;
+                private int keyCode;
 
-                GameKeys matchingKey;
+                GameKeyManager.GameKeys matchingKey;
 
                 public int getKeyCode() {
                     return keyCode;
@@ -195,12 +194,15 @@ public class SettingScreen extends Screen {
                     this.keyCode = keyCode;
                 }
 
-                public KeyItem(String labelText, int keyCode, GameKeys matchingKey) {
+                public KeyItem(String labelText, int keyCode, GameKeyManager.GameKeys matchingKey) {
                     setLayout(new GridLayout(1, 2));
                     setBackground(Color.BLACK);
                     setForeground(Color.WHITE);
                     label = new Label(labelText);
                     field = new JTextField();
+
+                    String keyString = extractKeyStringFromKeyCode(keyCode);
+                    field.setText(keyString);
                     field.setEditable(false);
                     this.keyCode = keyCode;
                     this.matchingKey = matchingKey;
@@ -208,12 +210,53 @@ public class SettingScreen extends Screen {
                         @Override
                         public void keyPressed(KeyEvent e) {
                             setKeyCode(e.getKeyCode());
-                            field.setText(String.valueOf((char) keyCode));
+                            String keyString = extractKeyStringFromKeyCode(e.getKeyCode());
+                            field.setText(keyString);
                         }
                     });
 
                     add(label);
                     add(field);
+                }
+
+                private static String extractKeyStringFromKeyCode(int keyCode) {
+                    String keyString;
+
+                    switch (keyCode) {
+                        case KeyEvent.VK_SHIFT:
+                            keyString = "SHIFT";
+                            break;
+                        case KeyEvent.VK_ESCAPE:
+                            keyString = "ESC";
+                            break;
+                        case KeyEvent.VK_UP:
+                            keyString = "UP";
+                            break;
+                        case KeyEvent.VK_DOWN:
+                            keyString = "DOWN";
+                            break;
+                        case KeyEvent.VK_LEFT:
+                            keyString = "LEFT";
+                            break;
+                        case KeyEvent.VK_RIGHT:
+                            keyString = "RIGHT";
+                            break;
+                        case KeyEvent.VK_SPACE:
+                            keyString = "SPACE";
+                            break;
+                        default:
+                            char keyChar = (char) keyCode;
+
+                            // keyChar 값이 유효한 문자인지 확인
+                            if (Character.isISOControl(keyChar)) {
+                                // 유효하지 않은 문자일 경우, 빈 문자(공백)으로 대체
+                                keyString = "DON\'t KNOW";
+                            } else {
+                                keyString = String.valueOf(keyChar);
+                            }
+                            break;
+                    }
+                    return keyString;
                 }
             }
 
@@ -257,19 +300,36 @@ public class SettingScreen extends Screen {
                         // 키는 모두 기본 키로 설정
                         List<KeyControlArea.KeySettingArea.KeyItem> keyItemList = keyControlArea.keySettingArea.getKeyItemList();
                         for (KeyControlArea.KeySettingArea.KeyItem keyItem : keyItemList) {
-                            GameKeys matchingKey = keyItem.matchingKey;
-                            if (matchingKey == GameKeys.ROTATE_KEY) GameKeyManager.setRotateKey(KeyEvent.VK_SHIFT);
-                            else if (matchingKey == GameKeys.GAME_OVER_KEY)
-                                GameKeyManager.setGameOverKey(KeyEvent.VK_ESCAPE);
-                            else if (matchingKey == GameKeys.PAUSE_KEY) GameKeyManager.setPauseKey(KeyEvent.VK_P);
-                            else if (matchingKey == GameKeys.SUPER_DROP_KEY)
-                                GameKeyManager.setSuperDropKey(KeyEvent.VK_SPACE);
-                            else if (matchingKey == GameKeys.MOVE_DOWN_KEY)
-                                GameKeyManager.setMoveDownKey(KeyEvent.VK_DOWN);
-                            else if (matchingKey == GameKeys.MOVE_LEFT_KEY)
-                                GameKeyManager.setMoveLeftKey(KeyEvent.VK_LEFT);
-                            else if (matchingKey == GameKeys.MOVE_RIGHT_KEY)
-                                GameKeyManager.setMoveRightKey(KeyEvent.VK_RIGHT);
+                            GameKeyManager.GameKeys matchingKey = keyItem.matchingKey;
+                            if (matchingKey == GameKeyManager.GameKeys.ROTATE_KEY) {
+                                int keyCode = KeyEvent.VK_SHIFT;
+                                GameKeyManager.setRotateKey(keyCode);
+                                keyItem.field.setText(KeyControlArea.KeySettingArea.KeyItem.extractKeyStringFromKeyCode(keyCode));
+                            } else if (matchingKey == GameKeyManager.GameKeys.GAME_OVER_KEY) {
+                                int keyCode = KeyEvent.VK_ESCAPE;
+                                GameKeyManager.setRotateKey(keyCode);
+                                keyItem.field.setText(KeyControlArea.KeySettingArea.KeyItem.extractKeyStringFromKeyCode(keyCode));
+                            } else if (matchingKey == GameKeyManager.GameKeys.PAUSE_KEY) {
+                                int keyCode = KeyEvent.VK_P;
+                                GameKeyManager.setRotateKey(keyCode);
+                                keyItem.field.setText(KeyControlArea.KeySettingArea.KeyItem.extractKeyStringFromKeyCode(keyCode));
+                            } else if (matchingKey == GameKeyManager.GameKeys.SUPER_DROP_KEY) {
+                                int keyCode = KeyEvent.VK_SPACE;
+                                GameKeyManager.setRotateKey(keyCode);
+                                keyItem.field.setText(KeyControlArea.KeySettingArea.KeyItem.extractKeyStringFromKeyCode(keyCode));
+                            } else if (matchingKey == GameKeyManager.GameKeys.MOVE_DOWN_KEY) {
+                                int keyCode = KeyEvent.VK_DOWN;
+                                GameKeyManager.setRotateKey(keyCode);
+                                keyItem.field.setText(KeyControlArea.KeySettingArea.KeyItem.extractKeyStringFromKeyCode(keyCode));
+                            } else if (matchingKey == GameKeyManager.GameKeys.MOVE_LEFT_KEY) {
+                                int keyCode = KeyEvent.VK_LEFT;
+                                GameKeyManager.setRotateKey(keyCode);
+                                keyItem.field.setText(KeyControlArea.KeySettingArea.KeyItem.extractKeyStringFromKeyCode(keyCode));
+                            } else if (matchingKey == GameKeyManager.GameKeys.MOVE_RIGHT_KEY) {
+                                int keyCode = KeyEvent.VK_RIGHT;
+                                GameKeyManager.setRotateKey(keyCode);
+                                keyItem.field.setText(KeyControlArea.KeySettingArea.KeyItem.extractKeyStringFromKeyCode(keyCode));
+                            }
                         }
                         JOptionPane.showMessageDialog(resetArea, "설정 초기화 완료");
                     }
@@ -294,15 +354,20 @@ public class SettingScreen extends Screen {
                 public void actionPerformed(ActionEvent e) {
                     List<KeyControlArea.KeySettingArea.KeyItem> keyItemList = keyControlArea.keySettingArea.getKeyItemList();
                     for (KeyControlArea.KeySettingArea.KeyItem keyItem : keyItemList) {
-                        GameKeys matchingKey = keyItem.matchingKey;
-                        int keyCode = keyItem.keyCode;
-                        if (matchingKey == GameKeys.ROTATE_KEY) GameKeyManager.setRotateKey(keyCode);
-                        else if (matchingKey == GameKeys.GAME_OVER_KEY) GameKeyManager.setGameOverKey(keyCode);
-                        else if (matchingKey == GameKeys.PAUSE_KEY) GameKeyManager.setPauseKey(keyCode);
-                        else if (matchingKey == GameKeys.SUPER_DROP_KEY) GameKeyManager.setSuperDropKey(keyCode);
-                        else if (matchingKey == GameKeys.MOVE_DOWN_KEY) GameKeyManager.setMoveDownKey(keyCode);
-                        else if (matchingKey == GameKeys.MOVE_LEFT_KEY) GameKeyManager.setMoveLeftKey(keyCode);
-                        else if (matchingKey == GameKeys.MOVE_RIGHT_KEY) GameKeyManager.setMoveRightKey(keyCode);
+                        GameKeyManager.GameKeys matchingKey = keyItem.matchingKey;
+                        int keyCode = keyItem.getKeyCode();
+                        if (matchingKey == GameKeyManager.GameKeys.ROTATE_KEY) GameKeyManager.setRotateKey(keyCode);
+                        else if (matchingKey == GameKeyManager.GameKeys.GAME_OVER_KEY)
+                            GameKeyManager.setGameOverKey(keyCode);
+                        else if (matchingKey == GameKeyManager.GameKeys.PAUSE_KEY) GameKeyManager.setPauseKey(keyCode);
+                        else if (matchingKey == GameKeyManager.GameKeys.SUPER_DROP_KEY)
+                            GameKeyManager.setSuperDropKey(keyCode);
+                        else if (matchingKey == GameKeyManager.GameKeys.MOVE_DOWN_KEY)
+                            GameKeyManager.setMoveDownKey(keyCode);
+                        else if (matchingKey == GameKeyManager.GameKeys.MOVE_LEFT_KEY)
+                            GameKeyManager.setMoveLeftKey(keyCode);
+                        else if (matchingKey == GameKeyManager.GameKeys.MOVE_RIGHT_KEY)
+                            GameKeyManager.setMoveRightKey(keyCode);
                     }
                 }
             });
