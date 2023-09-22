@@ -129,7 +129,7 @@ public class GameOverScreen extends Screen {
 
         public InputArea() {
             setBackground(Color.BLACK);
-
+            setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
             this.actionListener = new ScoreBoardActionListener();
 
             nameLabel = new JLabel("NAME : ", SwingConstants.LEFT);
