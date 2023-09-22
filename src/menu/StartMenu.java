@@ -1,10 +1,12 @@
 package menu;
 
+import constant.Constants;
 import screen.GameScreen;
 import client.GameClient;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentListener;
 
 public class StartMenu extends Menu {
     public StartMenu(String text) {

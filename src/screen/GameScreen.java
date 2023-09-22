@@ -15,7 +15,7 @@ import java.util.concurrent.TimeUnit;
 import static constant.Constants.*;
 
 public class GameScreen extends Screen {
-    private final GameArea gameArea;
+    public final GameArea gameArea;
     private final GameInfoArea gameInfoArea;
     private Block currBlock;
     private Block nextBlock;
@@ -27,18 +27,21 @@ public class GameScreen extends Screen {
 
     public GameScreen() {
         setLayout(new BorderLayout());
-
         init();
 
         gameArea = new GameArea();
         gameInfoArea = new GameInfoArea();
 
         add(gameArea, BorderLayout.WEST);
-        add(gameInfoArea, BorderLayout.CENTER);
+
+        add(gameInfoArea, BorderLayout.EAST);
 
         startTimer();
 
         SwingUtilities.invokeLater(() -> {
+            GameClient client = (GameClient) getTopLevelAncestor();
+            System.out.println(client.getContentPane().getSize());
+            System.out.println(client.getSize());
             setKeyListener();
             setFocusable(true);
             requestFocusInWindow();
@@ -67,7 +70,7 @@ public class GameScreen extends Screen {
     }
 
     private void checkClearLine() {
-        for (int y = GAME_AREA_HEIGHT - BLOCK_CELL_SIZE; y > 0; y -= BLOCK_CELL_SIZE) {
+        for (int y = CLIENT_HEIGHT - BLOCK_CELL_SIZE; y > 0; y -= BLOCK_CELL_SIZE) {
             int clearedColumnCnt = 0;
             for (int x = 0; x < GAME_AREA_WIDTH; x += BLOCK_CELL_SIZE) {
                 if (gameArea.background[y][x] == null) break;
@@ -126,8 +129,10 @@ public class GameScreen extends Screen {
     }
 
     private boolean checkBottomCollision() {
-
-        if (currBlock.getBottomEdge() == GAME_AREA_HEIGHT - BLOCK_CELL_SIZE) return true;
+        if (currBlock.getBottomEdge() == CLIENT_HEIGHT) {
+            System.out.println(currBlock.getBottomEdge());
+            return true;
+        }
 
         int[][] blockShape = currBlock.getShape();
         int w = currBlock.getWidth();
@@ -200,7 +205,7 @@ public class GameScreen extends Screen {
                     int x = currBlock.getX() + j * BLOCK_CELL_SIZE;
                     int y = currBlock.getY() + i * BLOCK_CELL_SIZE;
 
-                    if (x < 0 || x >= GAME_AREA_WIDTH || y >= GAME_AREA_HEIGHT) {
+                    if (x < 0 || x >= GAME_AREA_WIDTH || y >= CLIENT_HEIGHT) {
                         currBlock.rotateUndo();
                         return;
                     }

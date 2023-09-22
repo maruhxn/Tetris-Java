@@ -1,6 +1,6 @@
+import client.GameClient;
 import score.ScoreDao;
 import screen.MainScreen;
-import client.GameClient;
 
 public class Main {
     public static void main(String[] args) {

@@ -1,6 +1,5 @@
 package screen;
 
-import constant.Constants;
 import unit.block.Block;
 
 import javax.swing.*;
@@ -13,10 +12,10 @@ public class GameArea extends JPanel {
     public Color[][] background;
 
     public GameArea() {
-        setPreferredSize(new Dimension(GAME_AREA_WIDTH, GAME_AREA_HEIGHT));
+        setPreferredSize(new Dimension(GAME_AREA_WIDTH, CLIENT_HEIGHT));
         setBackground(Color.BLACK);
+        background = new Color[CLIENT_HEIGHT][GAME_AREA_WIDTH];
 
-        background = new Color[GAME_AREA_HEIGHT][GAME_AREA_WIDTH];
         SwingUtilities.invokeLater(() -> {
             this.currBlock = ((GameScreen) getParent()).getCurrBlock();
         });
@@ -56,7 +55,7 @@ public class GameArea extends JPanel {
     private void drawBackground(Graphics g) {
         Color color;
 
-        for (int i = 0; i < GAME_AREA_HEIGHT; i = i + BLOCK_CELL_SIZE) {
+        for (int i = 0; i < CLIENT_HEIGHT; i = i + BLOCK_CELL_SIZE) {
             for (int j = 0; j < GAME_AREA_WIDTH; j = j + BLOCK_CELL_SIZE) {
                 color = background[i][j];
                 if (color != null) {

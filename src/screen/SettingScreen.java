@@ -1,11 +1,17 @@
 package screen;
 
+import client.GameClient;
+import constant.Constants;
 import menu.Button;
 import menu.Label;
 
 import javax.swing.*;
 import javax.swing.border.LineBorder;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import static constant.Constants.*;
 
 public class SettingScreen extends Screen {
     JPanel sizeControlArea, keyControlArea, resetArea, navigateArea;
@@ -28,7 +34,7 @@ public class SettingScreen extends Screen {
         add(navigateArea);
     }
 
-    private abstract static class Area extends JPanel {
+    private abstract class Area extends JPanel {
         public Area() {
             setBackground(Color.BLACK);
             setForeground(Color.WHITE);
@@ -42,11 +48,13 @@ public class SettingScreen extends Screen {
         JButton smallBtn, mediumBtn, largeBtn;
 
         public SizeControlArea() {
-            setLayout(new GridLayout(2, 1));
+            setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
             sizeControlLabel = new Label("화면 크기 조절");
             sizeControlLabel.setFont(new Font("Courier", Font.BOLD, 18));
+            sizeControlLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
             btnArea = new JPanel();
+            btnArea.setLayout(new GridLayout(1, 3));
             smallBtn = new Button("SMALL");
             mediumBtn = new Button("MEDIUM");
             largeBtn = new Button("LARGE");
@@ -54,12 +62,43 @@ public class SettingScreen extends Screen {
             btnArea.setBackground(Color.BLACK);
             btnArea.setForeground(Color.WHITE);
 
+            smallBtn.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    Constants.setClientSmall();
+                    resizeClient();
+                }
+            });
+
+            mediumBtn.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    Constants.setClientMedium();
+                    resizeClient();
+                }
+            });
+
+            largeBtn.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    Constants.setClientLarge();
+                    resizeClient();
+                }
+            });
+
             btnArea.add(smallBtn);
             btnArea.add(mediumBtn);
             btnArea.add(largeBtn);
 
             add(sizeControlLabel);
+            add(Box.createRigidArea(new Dimension(0, 10)));
             add(btnArea);
+        }
+
+        private void resizeClient() {
+            GameClient client = (GameClient) getTopLevelAncestor();
+            client.setSize(CLIENT_WIDTH + WINDOW_BORDER, CLIENT_HEIGHT + WINDOW_MANAGER_HEIGHT);
+            client.revalidate();
         }
     }
 
@@ -68,17 +107,20 @@ public class SettingScreen extends Screen {
         KeySettingArea keySettingArea;
 
         public KeyControlArea() {
-            setLayout(new GridLayout(2, 1));
+            setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
             keyControlLabel = new Label("키 설정");
             keyControlLabel.setFont(new Font("Courier", Font.BOLD, 18));
 
             keySettingArea = new KeySettingArea();
 
+            keyControlLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+
             add(keyControlLabel);
+            add(Box.createRigidArea(new Dimension(0, 10)));
             add(keySettingArea);
         }
 
-        private static class KeySettingArea extends JPanel {
+        private class KeySettingArea extends JPanel {
             KeyItem rotateKey, pauseKey, leftKey, rightKey, exitKey, dropKey, superDropKey;
 
             public KeySettingArea() {
@@ -110,7 +152,7 @@ public class SettingScreen extends Screen {
                 return new Insets(10, 10, 10, 10);
             }
 
-            public static class KeyItem extends JPanel {
+            public class KeyItem extends JPanel {
                 JLabel label;
                 JTextField field;
 
@@ -148,6 +190,14 @@ public class SettingScreen extends Screen {
         public NavArea() {
             mainBtn = new Button("메인으로");
             saveBtn = new Button("설정 저장");
+
+            mainBtn.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    GameClient client = (GameClient) getTopLevelAncestor();
+                    client.switchPanel(new MainScreen());
+                }
+            });
 
             add(mainBtn);
             add(saveBtn);
