@@ -2,7 +2,6 @@ package screen;
 
 import client.GameClient;
 import manager.GameKeyManager;
-import manager.GameSizeManager;
 import menu.Button;
 import menu.Label;
 import score.ScoreDao;
@@ -56,6 +55,8 @@ public class SettingScreen extends Screen {
         JPanel btnArea;
         JButton smallBtn, mediumBtn, largeBtn;
 
+        GameSize selectedSizeSetting = GAME_SIZE;
+
         public SizeControlArea() {
             setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
             sizeControlLabel = new Label("화면 크기 조절");
@@ -68,11 +69,11 @@ public class SettingScreen extends Screen {
             mediumBtn = new Button("MEDIUM");
             largeBtn = new Button("LARGE");
 
-            if (GAME_SIZE == GameSize.SMALL) {
+            if (selectedSizeSetting == GameSize.SMALL) {
                 smallBtn.setBackground(Color.YELLOW);
-            } else if (GAME_SIZE == GameSize.MEDIUM) {
+            } else if (selectedSizeSetting == GameSize.MEDIUM) {
                 mediumBtn.setBackground(Color.YELLOW);
-            } else if (GAME_SIZE == GameSize.LARGE) {
+            } else if (selectedSizeSetting == GameSize.LARGE) {
                 largeBtn.setBackground(Color.YELLOW);
             }
             btnArea.setBackground(Color.BLACK);
@@ -81,33 +82,30 @@ public class SettingScreen extends Screen {
             smallBtn.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    GameSizeManager.setClientSmall();
+                    selectedSizeSetting = GameSize.SMALL;
                     smallBtn.setBackground(Color.YELLOW);
                     mediumBtn.setBackground(Color.WHITE);
                     largeBtn.setBackground(Color.WHITE);
-                    resizeClient();
                 }
             });
 
             mediumBtn.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    GameSizeManager.setClientMedium();
+                    selectedSizeSetting = GameSize.MEDIUM;
                     smallBtn.setBackground(Color.WHITE);
                     mediumBtn.setBackground(Color.YELLOW);
                     largeBtn.setBackground(Color.WHITE);
-                    resizeClient();
                 }
             });
 
             largeBtn.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    GameSizeManager.setClientLarge();
+                    selectedSizeSetting = GameSize.LARGE;
                     smallBtn.setBackground(Color.WHITE);
                     mediumBtn.setBackground(Color.WHITE);
                     largeBtn.setBackground(Color.YELLOW);
-                    resizeClient();
                 }
             });
 
@@ -291,7 +289,7 @@ public class SettingScreen extends Screen {
 
                     if (result == JOptionPane.YES_OPTION) {
                         // 사이즈 small로 설정
-                        GameSizeManager.setClientMedium();
+                        setGameSize(GameSize.MEDIUM);
                         sizeControlArea.smallBtn.setBackground(Color.WHITE);
                         sizeControlArea.mediumBtn.setBackground(Color.YELLOW);
                         sizeControlArea.largeBtn.setBackground(Color.WHITE);
@@ -352,6 +350,11 @@ public class SettingScreen extends Screen {
             saveBtn.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
+                    // 사이즈 설정 반영
+                    setGameSize(sizeControlArea.selectedSizeSetting);
+                    sizeControlArea.resizeClient();
+
+                    // 키 설정 반영
                     List<KeyControlArea.KeySettingArea.KeyItem> keyItemList = keyControlArea.keySettingArea.getKeyItemList();
                     for (KeyControlArea.KeySettingArea.KeyItem keyItem : keyItemList) {
                         GameKeyManager.GameKeys matchingKey = keyItem.matchingKey;

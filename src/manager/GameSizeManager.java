@@ -44,16 +44,11 @@ public class GameSizeManager {
 
     public static GameSize GAME_SIZE = GameSize.MEDIUM;
 
-    public static void setClientSmall() {
-        GAME_SIZE = GameSize.SMALL;
+    public static GameSize getGameSize() {
+        return GAME_SIZE;
     }
 
-    public static void setClientMedium() {
-        GAME_SIZE = GameSize.MEDIUM;
+    public static void setGameSize(GameSize gameSize) {
+        GAME_SIZE = gameSize;
     }
-
-    public static void setClientLarge() {
-        GAME_SIZE = GameSize.LARGE;
-    }
-
 }
