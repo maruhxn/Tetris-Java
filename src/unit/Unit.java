@@ -1,10 +1,8 @@
 package unit;
 
-import constant.Constants;
-
 import java.awt.*;
 
-import static constant.Constants.*;
+import static manager.GameSizeManager.GAME_SIZE;
 
 public abstract class Unit {
 
@@ -16,7 +14,7 @@ public abstract class Unit {
     protected int[][] shape;
 
     public Unit() {
-        this.x = GAME_AREA_WIDTH / 2;
+        this.x = GAME_SIZE.getGameAreaWidth() / 2;
         this.y = 0;
         this.color = Color.WHITE;
     }
@@ -24,6 +22,7 @@ public abstract class Unit {
     public int getX() {
         return x;
     }
+
     public int getY() {
         return y;
     }
@@ -54,7 +53,7 @@ public abstract class Unit {
     }
 
     public int getBottomEdge() {
-        return y + getHeight() * Constants.BLOCK_CELL_SIZE;
+        return y + getHeight() * GAME_SIZE.getBlockCellSize();
     }
 
     public int getLeftEdge() {
@@ -62,18 +61,18 @@ public abstract class Unit {
     }
 
     public int getRightEdge() {
-        return x + (getWidth() * BLOCK_CELL_SIZE);
+        return x + (getWidth() * GAME_SIZE.getBlockCellSize());
     }
 
     public void moveDown() {
-        this.y = y + Constants.BLOCK_CELL_SIZE;
+        this.y = y + GAME_SIZE.getBlockCellSize();
     }
 
     public void moveLeft() {
-        this.x = x - BLOCK_CELL_SIZE;
+        this.x = x - GAME_SIZE.getBlockCellSize();
     }
 
     public void moveRight() {
-        this.x = x + BLOCK_CELL_SIZE;
+        this.x = x + GAME_SIZE.getBlockCellSize();
     }
 }

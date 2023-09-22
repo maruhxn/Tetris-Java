@@ -1,6 +1,7 @@
 package screen;
 
 import client.GameClient;
+import manager.GameKeyManager;
 import manager.GameManager;
 import unit.block.*;
 
@@ -12,10 +13,10 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-import static constant.Constants.*;
+import static manager.GameSizeManager.*;
 
 public class GameScreen extends Screen {
-    private final GameArea gameArea;
+    public final GameArea gameArea;
     private final GameInfoArea gameInfoArea;
     private Block currBlock;
     private Block nextBlock;
@@ -27,18 +28,21 @@ public class GameScreen extends Screen {
 
     public GameScreen() {
         setLayout(new BorderLayout());
-
         init();
 
         gameArea = new GameArea();
         gameInfoArea = new GameInfoArea();
 
         add(gameArea, BorderLayout.WEST);
-        add(gameInfoArea, BorderLayout.CENTER);
+
+        add(gameInfoArea, BorderLayout.EAST);
 
         startTimer();
 
         SwingUtilities.invokeLater(() -> {
+            GameClient client = (GameClient) getTopLevelAncestor();
+            System.out.println(client.getContentPane().getSize());
+            System.out.println(client.getSize());
             setKeyListener();
             setFocusable(true);
             requestFocusInWindow();
@@ -67,25 +71,25 @@ public class GameScreen extends Screen {
     }
 
     private void checkClearLine() {
-        for (int y = GAME_AREA_HEIGHT - BLOCK_CELL_SIZE; y > 0; y -= BLOCK_CELL_SIZE) {
+        for (int y = GAME_SIZE.getHeight() - GAME_SIZE.getBlockCellSize(); y > 0; y -= GAME_SIZE.getBlockCellSize()) {
             int clearedColumnCnt = 0;
-            for (int x = 0; x < GAME_AREA_WIDTH; x += BLOCK_CELL_SIZE) {
+            for (int x = 0; x < GAME_SIZE.getGameAreaWidth(); x += GAME_SIZE.getBlockCellSize()) {
                 if (gameArea.background[y][x] == null) break;
                 clearedColumnCnt++;
             }
 
-            if (clearedColumnCnt == GAME_AREA_WIDTH / BLOCK_CELL_SIZE) {
+            if (clearedColumnCnt == GAME_SIZE.getGameAreaWidth() / GAME_SIZE.getBlockCellSize()) {
                 y = clearLine(y);
             }
         }
     }
 
     private int clearLine(int y) {
-        gameArea.background[y] = new Color[GAME_AREA_WIDTH];
-        for (int i = y; i > 0; i -= BLOCK_CELL_SIZE) {
-            gameArea.background[i] = gameArea.background[i - BLOCK_CELL_SIZE];
+        gameArea.background[y] = new Color[GAME_SIZE.getGameAreaWidth()];
+        for (int i = y; i > 0; i -= GAME_SIZE.getBlockCellSize()) {
+            gameArea.background[i] = gameArea.background[i - GAME_SIZE.getBlockCellSize()];
         }
-        y += BLOCK_CELL_SIZE;
+        y += GAME_SIZE.getBlockCellSize();
         speedUp();
         gameArea.repaint();
         gameInfoArea.repaint();
@@ -99,7 +103,7 @@ public class GameScreen extends Screen {
 
     private void checkGameOver() {
         // (0, 0~400)에 블럭이 있다면 게임 오버.
-        for (int i = 0; i < GAME_AREA_WIDTH; i = i + BLOCK_CELL_SIZE) {
+        for (int i = 0; i < GAME_SIZE.getGameAreaWidth(); i = i + GAME_SIZE.getBlockCellSize()) {
             if (gameArea.background[0][i] != null) {
                 timer.stop();
                 ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
@@ -126,8 +130,10 @@ public class GameScreen extends Screen {
     }
 
     private boolean checkBottomCollision() {
-
-        if (currBlock.getBottomEdge() == GAME_AREA_HEIGHT - BLOCK_CELL_SIZE) return true;
+        if (currBlock.getBottomEdge() == GAME_SIZE.getHeight()) {
+            System.out.println(currBlock.getBottomEdge());
+            return true;
+        }
 
         int[][] blockShape = currBlock.getShape();
         int w = currBlock.getWidth();
@@ -136,10 +142,10 @@ public class GameScreen extends Screen {
         for (int i = 0; i < h; ++i) {
             for (int j = 0; j < w; ++j) {
                 if (blockShape[i][j] == 1) {
-                    int x = currBlock.getX() + j * BLOCK_CELL_SIZE;
-                    int y = currBlock.getY() + i * BLOCK_CELL_SIZE;
+                    int x = currBlock.getX() + j * GAME_SIZE.getBlockCellSize();
+                    int y = currBlock.getY() + i * GAME_SIZE.getBlockCellSize();
                     // 현재 y 바로 다음 칸의 background가 채워져 있다면 충돌.
-                    if (gameArea.background[y + BLOCK_CELL_SIZE][x] != null) return true;
+                    if (gameArea.background[y + GAME_SIZE.getBlockCellSize()][x] != null) return true;
                 }
             }
         }
@@ -156,9 +162,9 @@ public class GameScreen extends Screen {
         for (int i = 0; i < h; ++i) {
             for (int j = 0; j < w; ++j) {
                 if (blockShape[i][j] == 1) {
-                    int x = currBlock.getX() + j * BLOCK_CELL_SIZE;
-                    int y = currBlock.getY() + i * BLOCK_CELL_SIZE;
-                    if (gameArea.background[y][x - BLOCK_CELL_SIZE] != null) return true;
+                    int x = currBlock.getX() + j * GAME_SIZE.getBlockCellSize();
+                    int y = currBlock.getY() + i * GAME_SIZE.getBlockCellSize();
+                    if (gameArea.background[y][x - GAME_SIZE.getBlockCellSize()] != null) return true;
                 }
             }
         }
@@ -167,7 +173,7 @@ public class GameScreen extends Screen {
     }
 
     private boolean checkRightCollision() {
-        if (currBlock.getRightEdge() >= GAME_AREA_WIDTH) return true;
+        if (currBlock.getRightEdge() >= GAME_SIZE.getGameAreaWidth()) return true;
 
         int[][] blockShape = currBlock.getShape();
         int w = currBlock.getWidth();
@@ -176,9 +182,9 @@ public class GameScreen extends Screen {
         for (int i = 0; i < h; ++i) {
             for (int j = 0; j < w; ++j) {
                 if (blockShape[i][j] == 1) {
-                    int x = currBlock.getX() + j * BLOCK_CELL_SIZE;
-                    int y = currBlock.getY() + i * BLOCK_CELL_SIZE;
-                    if (gameArea.background[y][x + BLOCK_CELL_SIZE] != null) return true;
+                    int x = currBlock.getX() + j * GAME_SIZE.getBlockCellSize();
+                    int y = currBlock.getY() + i * GAME_SIZE.getBlockCellSize();
+                    if (gameArea.background[y][x + GAME_SIZE.getBlockCellSize()] != null) return true;
                 }
             }
         }
@@ -197,10 +203,10 @@ public class GameScreen extends Screen {
         for (int i = 0; i < h; ++i) {
             for (int j = 0; j < w; ++j) {
                 if (blockShape[i][j] == 1) {
-                    int x = currBlock.getX() + j * BLOCK_CELL_SIZE;
-                    int y = currBlock.getY() + i * BLOCK_CELL_SIZE;
+                    int x = currBlock.getX() + j * GAME_SIZE.getBlockCellSize();
+                    int y = currBlock.getY() + i * GAME_SIZE.getBlockCellSize();
 
-                    if (x < 0 || x >= GAME_AREA_WIDTH || y >= GAME_AREA_HEIGHT) {
+                    if (x < 0 || x >= GAME_SIZE.getGameAreaWidth() || y >= GAME_SIZE.getHeight()) {
                         currBlock.rotateUndo();
                         return;
                     }
@@ -251,8 +257,8 @@ public class GameScreen extends Screen {
         for (int i = 0; i < h; ++i) {
             for (int j = 0; j < w; ++j) {
                 if (shape[i][j] == 1) {
-                    int x = currBlock.getX() + j * BLOCK_CELL_SIZE;
-                    int y = currBlock.getY() + i * BLOCK_CELL_SIZE;
+                    int x = currBlock.getX() + j * GAME_SIZE.getBlockCellSize();
+                    int y = currBlock.getY() + i * GAME_SIZE.getBlockCellSize();
                     gameArea.background[y][x] = color;
                 }
             }
@@ -267,7 +273,7 @@ public class GameScreen extends Screen {
         }
         endY = currBlock.getY();
 
-        int addedScore = (endY - startY) / BLOCK_CELL_SIZE * GameManager.getScorePerSecond();
+        int addedScore = (endY - startY) / GAME_SIZE.getBlockCellSize() * GameManager.getScorePerSecond();
         GameManager.addScore(addedScore);
         moveBlockToBackground();
         gameArea.repaint();
@@ -277,29 +283,22 @@ public class GameScreen extends Screen {
         this.addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
-                switch (e.getKeyCode()) {
-                    case KeyEvent.VK_LEFT:
-                        moveLeft();
-                        break;
-                    case KeyEvent.VK_RIGHT:
-                        moveRight();
-                        break;
-                    case KeyEvent.VK_DOWN:
-                        blockDownCycle();
-                        break;
-                    case KeyEvent.VK_SPACE:
-                        superDrop();
-                        break;
-                    case KeyEvent.VK_SHIFT:
-                        rotateBlock();
-                        break;
-                    case KeyEvent.VK_P:
-                        pause();
-                        break;
-                    case KeyEvent.VK_ESCAPE:
-                        forceExit();
-                        break;
-                }
+                int gameOverKey = GameKeyManager.getGameOverKey();
+                int moveLeftKey = GameKeyManager.getMoveLeftKey();
+                int moveDownKey = GameKeyManager.getMoveDownKey();
+                int moveRightKey = GameKeyManager.getMoveRightKey();
+                int pauseKey = GameKeyManager.getPauseKey();
+                int rotateKey = GameKeyManager.getRotateKey();
+                int superDropKey = GameKeyManager.getSuperDropKey();
+
+                if (e.getKeyCode() == moveLeftKey) moveLeft();
+                else if (e.getKeyCode() == moveRightKey) moveRight();
+                else if (e.getKeyCode() == moveDownKey) blockDownCycle();
+                else if (e.getKeyCode() == superDropKey) superDrop();
+                else if (e.getKeyCode() == rotateKey) rotateBlock();
+                else if (e.getKeyCode() == pauseKey) pause();
+                else if (e.getKeyCode() == gameOverKey) forceExit();
+
             }
         });
     }
@@ -319,7 +318,7 @@ public class GameScreen extends Screen {
             addKeyListener(new KeyAdapter() {
                 @Override
                 public void keyPressed(KeyEvent e) {
-                    if (e.getKeyCode() == KeyEvent.VK_P) {
+                    if (e.getKeyCode() == GameKeyManager.getPauseKey()) {
                         pause();
                     }
                 }

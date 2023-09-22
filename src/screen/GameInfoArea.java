@@ -1,6 +1,5 @@
 package screen;
 
-import constant.Constants;
 import manager.GameManager;
 import unit.block.Block;
 
@@ -8,16 +7,17 @@ import javax.swing.*;
 import javax.swing.border.LineBorder;
 import java.awt.*;
 
-import static constant.Constants.*;
+import static manager.GameSizeManager.*;
 
 public class GameInfoArea extends JPanel {
     private Block nextBlock;
 
     public GameInfoArea() {
-        super();
+        setPreferredSize(new Dimension(GAME_SIZE.getInfoAreaWidth(), GAME_SIZE.getHeight()));
+        setLayout(new GridLayout(0, 1));
+        setBackground(Color.BLUE);
         add(new NextBlockArea());
         add(new ScoreArea());
-
         SwingUtilities.invokeLater(() -> {
             this.nextBlock = ((GameScreen) getParent()).getNextBlock();
         });
@@ -27,7 +27,6 @@ public class GameInfoArea extends JPanel {
         public NextBlockArea() {
             LineBorder border = (LineBorder) BorderFactory.createLineBorder(Color.DARK_GRAY, 5);
             setBorder(border);
-            setPreferredSize(new Dimension(NEXT_BLOCK_AREA_WIDTH, NEXT_BLOCK_AREA_HEIGHT));
             setBackground(Color.GRAY);
         }
 
@@ -38,18 +37,18 @@ public class GameInfoArea extends JPanel {
             nextBlock = ((GameScreen) gameInfoArea.getParent()).getNextBlock();
             Graphics2D g2d = (Graphics2D) g;
 
-            if(nextBlock != null) {
+            if (nextBlock != null) {
                 int[][] blockShape = nextBlock.getShape();
                 int blockWidth = nextBlock.getWidth();
                 int blockHeight = nextBlock.getHeight();
                 g2d.setColor(nextBlock.getColor());
-
-                int middleX = NEXT_BLOCK_AREA_WIDTH / 2 - (blockWidth - 1) * BLOCK_CELL_SIZE;
-                int middleY = NEXT_BLOCK_AREA_HEIGHT / 2 - (blockHeight - 1) * Constants.BLOCK_CELL_SIZE;
+                
+                int middleX = getWidth() / 2 - (blockWidth - 2) * GAME_SIZE.getBlockCellSize();
+                int middleY = GAME_SIZE.getInfoAreaWidth() / 2 - (blockHeight - 1) * GAME_SIZE.getBlockCellSize();
                 for (int i = 0; i < blockHeight; ++i) {
                     for (int j = 0; j < blockWidth; ++j) {
                         if (blockShape[i][j] == 1)
-                            g2d.fillRect(middleX + j * BLOCK_CELL_SIZE, middleY + i * Constants.BLOCK_CELL_SIZE, Constants.BLOCK_CELL_SIZE, BLOCK_CELL_SIZE);
+                            g2d.fillRect(middleX + j * GAME_SIZE.getBlockCellSize(), middleY + i * GAME_SIZE.getBlockCellSize(), GAME_SIZE.getBlockCellSize(), GAME_SIZE.getBlockCellSize());
                     }
                 }
             }
@@ -60,24 +59,28 @@ public class GameInfoArea extends JPanel {
     public class ScoreArea extends JPanel {
         private JLabel scoreLabel;
         private JLabel levelLable;
+
         public ScoreArea() {
+            setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
             LineBorder border = (LineBorder) BorderFactory.createLineBorder(Color.DARK_GRAY, 5);
             setBorder(border);
-            setPreferredSize(new Dimension(NEXT_BLOCK_AREA_WIDTH, NEXT_BLOCK_AREA_HEIGHT));
             setBackground(Color.GRAY);
 
-            scoreLabel = new JLabel("0");
             levelLable = new JLabel();
+            scoreLabel = new JLabel("0");
 
-            add(scoreLabel);
             add(levelLable);
+            add(scoreLabel);
+
+            levelLable.setAlignmentX(Component.CENTER_ALIGNMENT);
+            scoreLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         }
 
         @Override
         public void paint(Graphics g) {
             super.paint(g);
-            scoreLabel.setText(String.valueOf(GameManager.getScore()));
             levelLable.setText("LEVEL : " + String.valueOf(GameManager.getLevel()));
+            scoreLabel.setText(String.valueOf(GameManager.getScore()));
         }
     }
 }

@@ -5,19 +5,15 @@ import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import java.awt.*;
 
-import static constant.Constants.CLIENT_HEIGHT;
-import static constant.Constants.CLIENT_WIDTH;
+import static manager.GameSizeManager.*;
+
 
 public class GameClient extends JFrame {
-//    private KeyListener clientKeyListener;
-
     public GameClient() {
-        // Init KeyListener
-//        this.clientKeyListener = new ClientKeyListener();
 
         // JFrame Setting
         super("TETRIS");
-        setSize(CLIENT_WIDTH, CLIENT_HEIGHT);
+        setSize(GAME_SIZE.getWidth() + WINDOW_BORDER, GAME_SIZE.getHeight() + WINDOW_MANAGER_HEIGHT);
         setBackground(Color.BLACK);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
@@ -32,35 +28,10 @@ public class GameClient extends JFrame {
         StyleConstants.setAlignment(styleSet, StyleConstants.ALIGN_CENTER);
     }
 
-//    private class ClientKeyListener implements KeyListener {
-//        @Override
-//        public void keyTyped(KeyEvent e) {
-//
-//        }
-//
-//        @Override
-//        public void keyPressed(KeyEvent e) {
-//            switch(e.getKeyCode()) {
-//                case KeyEvent.VK_DOWN:
-//                    break;
-//                case KeyEvent.VK_RIGHT:
-//                    break;
-//                case KeyEvent.VK_LEFT:
-//                    break;
-//                case KeyEvent.VK_UP:
-//                    break;
-//            }
-//        }
-//
-//        @Override
-//        public void keyReleased(KeyEvent e) {
-//
-//        }
-//    }
-
     public void switchPanel(JPanel newScreen) {
         setContentPane(newScreen);
         revalidate();
+        repaint();
         requestFocus();
     }
 }
