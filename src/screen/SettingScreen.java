@@ -69,6 +69,13 @@ public class SettingScreen extends Screen {
             mediumBtn = new Button("MEDIUM");
             largeBtn = new Button("LARGE");
 
+            if (GAME_SIZE == GameSize.SMALL) {
+                smallBtn.setBackground(Color.YELLOW);
+            } else if (GAME_SIZE == GameSize.MEDIUM) {
+                mediumBtn.setBackground(Color.YELLOW);
+            } else if (GAME_SIZE == GameSize.LARGE) {
+                largeBtn.setBackground(Color.YELLOW);
+            }
             btnArea.setBackground(Color.BLACK);
             btnArea.setForeground(Color.WHITE);
 
@@ -76,6 +83,9 @@ public class SettingScreen extends Screen {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     GameSizeManager.setClientSmall();
+                    smallBtn.setBackground(Color.YELLOW);
+                    mediumBtn.setBackground(Color.WHITE);
+                    largeBtn.setBackground(Color.WHITE);
                     resizeClient();
                 }
             });
@@ -84,6 +94,9 @@ public class SettingScreen extends Screen {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     GameSizeManager.setClientMedium();
+                    smallBtn.setBackground(Color.WHITE);
+                    mediumBtn.setBackground(Color.YELLOW);
+                    largeBtn.setBackground(Color.WHITE);
                     resizeClient();
                 }
             });
@@ -92,6 +105,9 @@ public class SettingScreen extends Screen {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     GameSizeManager.setClientLarge();
+                    smallBtn.setBackground(Color.WHITE);
+                    mediumBtn.setBackground(Color.WHITE);
+                    largeBtn.setBackground(Color.YELLOW);
                     resizeClient();
                 }
             });
@@ -233,6 +249,9 @@ public class SettingScreen extends Screen {
                     if (result == JOptionPane.YES_OPTION) {
                         // 사이즈 small로 설정
                         GameSizeManager.setClientMedium();
+                        sizeControlArea.smallBtn.setBackground(Color.WHITE);
+                        sizeControlArea.mediumBtn.setBackground(Color.YELLOW);
+                        sizeControlArea.largeBtn.setBackground(Color.WHITE);
                         sizeControlArea.resizeClient();
 
                         // 키는 모두 기본 키로 설정
