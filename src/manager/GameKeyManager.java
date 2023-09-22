@@ -5,7 +5,7 @@ import java.awt.event.KeyEvent;
 public class GameKeyManager {
 
     public enum GameKeys {
-        ROTATE_KEY(), PAUSE_KEY, MOVE_LEFT_KEY, MOVE_RIGHT_KEY, MOVE_DOWN_KEY, SUPER_DROP_KEY, GAME_OVER_KEY
+        ROTATE_KEY, PAUSE_KEY, MOVE_LEFT_KEY, MOVE_RIGHT_KEY, MOVE_DOWN_KEY, SUPER_DROP_KEY, GAME_OVER_KEY
     }
 
     private static int ROTATE_KEY = KeyEvent.VK_SHIFT;

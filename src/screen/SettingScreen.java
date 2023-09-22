@@ -1,6 +1,7 @@
 package screen;
 
 import client.GameClient;
+import manager.ConfigManager;
 import manager.GameKeyManager;
 import menu.Button;
 import menu.Label;
@@ -293,42 +294,55 @@ public class SettingScreen extends Screen {
                         sizeControlArea.smallBtn.setBackground(Color.WHITE);
                         sizeControlArea.mediumBtn.setBackground(Color.YELLOW);
                         sizeControlArea.largeBtn.setBackground(Color.WHITE);
-                        sizeControlArea.resizeClient();
+                        sizeControlArea.selectedSizeSetting = GameSize.MEDIUM;
+                        ConfigManager.setConfigProperty("GAME_SIZE", "MEDIUM");
 
                         // 키는 모두 기본 키로 설정
                         List<KeyControlArea.KeySettingArea.KeyItem> keyItemList = keyControlArea.keySettingArea.getKeyItemList();
                         for (KeyControlArea.KeySettingArea.KeyItem keyItem : keyItemList) {
                             GameKeyManager.GameKeys matchingKey = keyItem.matchingKey;
+                            int keyCode = 0;
                             if (matchingKey == GameKeyManager.GameKeys.ROTATE_KEY) {
-                                int keyCode = KeyEvent.VK_SHIFT;
+                                keyCode = KeyEvent.VK_SHIFT;
                                 GameKeyManager.setRotateKey(keyCode);
+                                ConfigManager.setConfigProperty("ROTATE_KEY", String.valueOf(keyCode));
                                 keyItem.field.setText(KeyControlArea.KeySettingArea.KeyItem.extractKeyStringFromKeyCode(keyCode));
                             } else if (matchingKey == GameKeyManager.GameKeys.GAME_OVER_KEY) {
-                                int keyCode = KeyEvent.VK_ESCAPE;
-                                GameKeyManager.setRotateKey(keyCode);
+                                keyCode = KeyEvent.VK_ESCAPE;
+                                GameKeyManager.setGameOverKey(keyCode);
+                                ConfigManager.setConfigProperty("GAME_OVER_KEY", String.valueOf(keyCode));
                                 keyItem.field.setText(KeyControlArea.KeySettingArea.KeyItem.extractKeyStringFromKeyCode(keyCode));
                             } else if (matchingKey == GameKeyManager.GameKeys.PAUSE_KEY) {
-                                int keyCode = KeyEvent.VK_P;
-                                GameKeyManager.setRotateKey(keyCode);
+                                keyCode = KeyEvent.VK_P;
+                                GameKeyManager.setPauseKey(keyCode);
+                                ConfigManager.setConfigProperty("PAUSE_KEY", String.valueOf(keyCode));
                                 keyItem.field.setText(KeyControlArea.KeySettingArea.KeyItem.extractKeyStringFromKeyCode(keyCode));
                             } else if (matchingKey == GameKeyManager.GameKeys.SUPER_DROP_KEY) {
-                                int keyCode = KeyEvent.VK_SPACE;
-                                GameKeyManager.setRotateKey(keyCode);
+                                keyCode = KeyEvent.VK_SPACE;
+                                GameKeyManager.setSuperDropKey(keyCode);
+                                ConfigManager.setConfigProperty("SUPER_DROP_KEY", String.valueOf(keyCode));
                                 keyItem.field.setText(KeyControlArea.KeySettingArea.KeyItem.extractKeyStringFromKeyCode(keyCode));
                             } else if (matchingKey == GameKeyManager.GameKeys.MOVE_DOWN_KEY) {
-                                int keyCode = KeyEvent.VK_DOWN;
-                                GameKeyManager.setRotateKey(keyCode);
+                                keyCode = KeyEvent.VK_DOWN;
+                                GameKeyManager.setMoveDownKey(keyCode);
+                                ConfigManager.setConfigProperty("MOVE_DOWN_KEY", String.valueOf(keyCode));
                                 keyItem.field.setText(KeyControlArea.KeySettingArea.KeyItem.extractKeyStringFromKeyCode(keyCode));
                             } else if (matchingKey == GameKeyManager.GameKeys.MOVE_LEFT_KEY) {
-                                int keyCode = KeyEvent.VK_LEFT;
-                                GameKeyManager.setRotateKey(keyCode);
+                                keyCode = KeyEvent.VK_LEFT;
+                                GameKeyManager.setMoveLeftKey(keyCode);
+                                ConfigManager.setConfigProperty("MOVE_LEFT_KEY", String.valueOf(keyCode));
                                 keyItem.field.setText(KeyControlArea.KeySettingArea.KeyItem.extractKeyStringFromKeyCode(keyCode));
                             } else if (matchingKey == GameKeyManager.GameKeys.MOVE_RIGHT_KEY) {
-                                int keyCode = KeyEvent.VK_RIGHT;
-                                GameKeyManager.setRotateKey(keyCode);
+                                keyCode = KeyEvent.VK_RIGHT;
+                                GameKeyManager.setMoveRightKey(keyCode);
+                                ConfigManager.setConfigProperty("MOVE_RIGHT_KEY", String.valueOf(keyCode));
                                 keyItem.field.setText(KeyControlArea.KeySettingArea.KeyItem.extractKeyStringFromKeyCode(keyCode));
                             }
+
+                            keyItem.setKeyCode(keyCode);
                         }
+                        ConfigManager.saveConfig();
+                        sizeControlArea.resizeClient();
                         JOptionPane.showMessageDialog(resetArea, "설정 초기화 완료");
                     }
 
@@ -350,27 +364,52 @@ public class SettingScreen extends Screen {
             saveBtn.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    // 사이즈 설정 반영
-                    setGameSize(sizeControlArea.selectedSizeSetting);
-                    sizeControlArea.resizeClient();
+                    System.out.println(sizeControlArea.selectedSizeSetting);
+                    switch (sizeControlArea.selectedSizeSetting) {
+                        case SMALL:
+                            ConfigManager.setConfigProperty("GAME_SIZE", "SMALL");
+                            break;
+                        case MEDIUM:
+                            ConfigManager.setConfigProperty("GAME_SIZE", "MEDIUM");
+                            break;
+                        case LARGE:
+                            ConfigManager.setConfigProperty("GAME_SIZE", "LARGE");
+                            break;
+                    }
 
                     // 키 설정 반영
                     List<KeyControlArea.KeySettingArea.KeyItem> keyItemList = keyControlArea.keySettingArea.getKeyItemList();
                     for (KeyControlArea.KeySettingArea.KeyItem keyItem : keyItemList) {
                         GameKeyManager.GameKeys matchingKey = keyItem.matchingKey;
                         int keyCode = keyItem.getKeyCode();
-                        if (matchingKey == GameKeyManager.GameKeys.ROTATE_KEY) GameKeyManager.setRotateKey(keyCode);
-                        else if (matchingKey == GameKeyManager.GameKeys.GAME_OVER_KEY)
+
+                        if (matchingKey == GameKeyManager.GameKeys.ROTATE_KEY) {
+                            GameKeyManager.setRotateKey(keyCode);
+                            ConfigManager.setConfigProperty("ROTATE_KEY", String.valueOf(keyCode));
+                        } else if (matchingKey == GameKeyManager.GameKeys.GAME_OVER_KEY) {
                             GameKeyManager.setGameOverKey(keyCode);
-                        else if (matchingKey == GameKeyManager.GameKeys.PAUSE_KEY) GameKeyManager.setPauseKey(keyCode);
-                        else if (matchingKey == GameKeyManager.GameKeys.SUPER_DROP_KEY)
+                            ConfigManager.setConfigProperty("GAME_OVER_KEY", String.valueOf(keyCode));
+                        } else if (matchingKey == GameKeyManager.GameKeys.PAUSE_KEY) {
+                            GameKeyManager.setPauseKey(keyCode);
+                            ConfigManager.setConfigProperty("PAUSE_KEY", String.valueOf(keyCode));
+                        } else if (matchingKey == GameKeyManager.GameKeys.SUPER_DROP_KEY) {
                             GameKeyManager.setSuperDropKey(keyCode);
-                        else if (matchingKey == GameKeyManager.GameKeys.MOVE_DOWN_KEY)
+                            ConfigManager.setConfigProperty("SUPER_DROP_KEY", String.valueOf(keyCode));
+                        } else if (matchingKey == GameKeyManager.GameKeys.MOVE_DOWN_KEY) {
                             GameKeyManager.setMoveDownKey(keyCode);
-                        else if (matchingKey == GameKeyManager.GameKeys.MOVE_LEFT_KEY)
+                            ConfigManager.setConfigProperty("MOVE_DOWN_KEY", String.valueOf(keyCode));
+                        } else if (matchingKey == GameKeyManager.GameKeys.MOVE_LEFT_KEY) {
                             GameKeyManager.setMoveLeftKey(keyCode);
-                        else if (matchingKey == GameKeyManager.GameKeys.MOVE_RIGHT_KEY)
+                            ConfigManager.setConfigProperty("MOVE_LEFT_KEY", String.valueOf(keyCode));
+                        } else if (matchingKey == GameKeyManager.GameKeys.MOVE_RIGHT_KEY) {
                             GameKeyManager.setMoveRightKey(keyCode);
+                            ConfigManager.setConfigProperty("MOVE_RIGHT_KEY", String.valueOf(keyCode));
+                        }
+
+                        // 사이즈 설정 반영
+                        setGameSize(sizeControlArea.selectedSizeSetting);
+                        ConfigManager.saveConfig();
+                        sizeControlArea.resizeClient();
                     }
                 }
             });
