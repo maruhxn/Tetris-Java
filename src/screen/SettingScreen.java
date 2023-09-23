@@ -48,8 +48,8 @@ public class SettingScreen extends AbstractScreen {
     private static class SizeControlArea extends AbstractArea {
         JLabel sizeControlLabel;
         JPanel btnArea;
-        JButton smallBtn, mediumBtn, largeBtn;
-        GameSize selectedSizeSetting = GAME_SIZE;
+        List<JButton> sizeBtns;
+        GameSize selectedSizeSetting;
 
         public SizeControlArea() {
             setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
@@ -58,45 +58,22 @@ public class SettingScreen extends AbstractScreen {
             sizeControlLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
             btnArea = new JPanel();
-            btnArea.setLayout(new GridLayout(1, 3));
-            smallBtn = new Button("SMALL");
-            mediumBtn = new Button("MEDIUM");
-            largeBtn = new Button("LARGE");
-
-            if (selectedSizeSetting == GameSize.SMALL) {
-                smallBtn.setBackground(Color.YELLOW);
-            } else if (selectedSizeSetting == GameSize.MEDIUM) {
-                mediumBtn.setBackground(Color.YELLOW);
-            } else if (selectedSizeSetting == GameSize.LARGE) {
-                largeBtn.setBackground(Color.YELLOW);
-            }
+            btnArea.setLayout(new GridLayout(1, 0));
             btnArea.setBackground(Color.BLACK);
             btnArea.setForeground(Color.WHITE);
 
-            smallBtn.addActionListener(e -> {
-                selectedSizeSetting = GameSize.SMALL;
-                smallBtn.setBackground(Color.YELLOW);
-                mediumBtn.setBackground(Color.WHITE);
-                largeBtn.setBackground(Color.WHITE);
-            });
+            sizeBtns = new ArrayList<>();
+            sizeBtns.add(new SizeBtn("SMALL", GameSize.SMALL));
+            sizeBtns.add(new SizeBtn("MEDIUM", GameSize.MEDIUM));
+            sizeBtns.add(new SizeBtn("LARGE", GameSize.LARGE));
 
-            mediumBtn.addActionListener(e -> {
-                selectedSizeSetting = GameSize.MEDIUM;
-                smallBtn.setBackground(Color.WHITE);
-                mediumBtn.setBackground(Color.YELLOW);
-                largeBtn.setBackground(Color.WHITE);
-            });
+            selectedSizeSetting = GAME_SIZE;
 
-            largeBtn.addActionListener(e -> {
-                selectedSizeSetting = GameSize.LARGE;
-                smallBtn.setBackground(Color.WHITE);
-                mediumBtn.setBackground(Color.WHITE);
-                largeBtn.setBackground(Color.YELLOW);
-            });
+            selectAndHighlightBtn(selectedSizeSetting);
 
-            btnArea.add(smallBtn);
-            btnArea.add(mediumBtn);
-            btnArea.add(largeBtn);
+            for (JButton btn : sizeBtns) {
+                btnArea.add(btn);
+            }
 
             addPadding(sizeControlLabel);
 
@@ -109,6 +86,25 @@ public class SettingScreen extends AbstractScreen {
             client.setSize(GAME_SIZE.getWidth() + WINDOW_BORDER, GAME_SIZE.getHeight() + WINDOW_MANAGER_HEIGHT);
             client.revalidate();
         }
+
+        private class SizeBtn extends Button {
+            public SizeBtn(String text, GameSize gameSize) {
+                super(text);
+                addActionListener(e -> selectAndHighlightBtn(gameSize));
+            }
+        }
+
+        private void selectAndHighlightBtn(GameSize gameSize) {
+            selectedSizeSetting = gameSize;
+            for (int i = 0; i < sizeBtns.size(); ++i) {
+                if (i == gameSize.getSizeId()) {
+                    sizeBtns.get(i).setBackground(Color.YELLOW);
+                } else {
+                    sizeBtns.get(i).setBackground(Color.WHITE);
+                }
+            }
+        }
+
     }
 
     private static class KeyControlArea extends AbstractArea {
@@ -268,11 +264,9 @@ public class SettingScreen extends AbstractScreen {
                 if (result == JOptionPane.YES_OPTION) {
                     // 사이즈 small로 설정
                     setGameSize(GameSize.MEDIUM);
-                    sizeControlArea.smallBtn.setBackground(Color.WHITE);
-                    sizeControlArea.mediumBtn.setBackground(Color.YELLOW);
-                    sizeControlArea.largeBtn.setBackground(Color.WHITE);
                     sizeControlArea.selectedSizeSetting = GameSize.MEDIUM;
-                    ConfigManager.setConfigProperty("GAME_SIZE", "MEDIUM");
+                    sizeControlArea.selectAndHighlightBtn(GameSize.MEDIUM);
+                    ConfigManager.setConfigProperty("GAME_SIZE", String.valueOf(sizeControlArea.selectedSizeSetting.getSizeId()));
 
                     // 키는 모두 기본 키로 설정
                     List<KeyControlArea.KeySettingArea.KeyItem> keyItemList = keyControlArea.keySettingArea.getKeyItemList();
@@ -338,17 +332,7 @@ public class SettingScreen extends AbstractScreen {
             saveBtn = new Button("설정 저장");
 
             saveBtn.addActionListener(e -> {
-                switch (sizeControlArea.selectedSizeSetting) {
-                    case SMALL:
-                        ConfigManager.setConfigProperty("GAME_SIZE", "SMALL");
-                        break;
-                    case MEDIUM:
-                        ConfigManager.setConfigProperty("GAME_SIZE", "MEDIUM");
-                        break;
-                    case LARGE:
-                        ConfigManager.setConfigProperty("GAME_SIZE", "LARGE");
-                        break;
-                }
+                ConfigManager.setConfigProperty("GAME_SIZE", String.valueOf(sizeControlArea.selectedSizeSetting.getSizeId()));
 
                 // 키 설정 반영
                 List<KeyControlArea.KeySettingArea.KeyItem> keyItemList = keyControlArea.keySettingArea.getKeyItemList();

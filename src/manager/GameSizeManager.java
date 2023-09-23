@@ -5,20 +5,26 @@ public class GameSizeManager {
     public static final int WINDOW_MANAGER_HEIGHT = 39;
 
     public enum GameSize {
-        SMALL(300, 400, 20, 100, 200), MEDIUM(600, 800, 40, 200, 400), LARGE(750, 1000, 50, 250, 500);
+        SMALL(0, 300, 400, 20, 100, 200), MEDIUM(1, 600, 800, 40, 200, 400), LARGE(2, 750, 1000, 50, 250, 500);
 
+        private final int sizeId;
         private final int width;
         private final int height;
         private final int blockCellSize;
         private final int infoAreaWidth;
         private final int gameAreaWidth;
 
-        GameSize(int width, int height, int blockCellSize, int infoAreaWidth, int gameAreaWidth) {
+        GameSize(int sizeId, int width, int height, int blockCellSize, int infoAreaWidth, int gameAreaWidth) {
+            this.sizeId = sizeId;
             this.width = width;
             this.height = height;
             this.blockCellSize = blockCellSize;
             this.infoAreaWidth = infoAreaWidth;
             this.gameAreaWidth = gameAreaWidth;
+        }
+
+        public int getSizeId() {
+            return sizeId;
         }
 
         public int getWidth() {

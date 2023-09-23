@@ -15,15 +15,14 @@ public class ConfigManager {
             // SIZE Setting
             String gameSize = configProperties.getProperty("GAME_SIZE");
             switch (gameSize) {
-                case "SMALL":
+                case "0":
                     GameSizeManager.GAME_SIZE = GameSizeManager.GameSize.SMALL;
                     break;
-                case "LARGE":
-                    GameSizeManager.GAME_SIZE = GameSizeManager.GameSize.LARGE;
-                    break;
-                case "MEDIUM":
-                default:
+                case "1":
                     GameSizeManager.GAME_SIZE = GameSizeManager.GameSize.MEDIUM;
+                    break;
+                case "2":
+                    GameSizeManager.GAME_SIZE = GameSizeManager.GameSize.LARGE;
                     break;
             }
 
