@@ -8,11 +8,6 @@ public class Score {
     long score;
     Timestamp createdAt;
 
-
-    public int getId() {
-        return id;
-    }
-
     public void setId(int id) {
         this.id = id;
     }
@@ -31,10 +26,6 @@ public class Score {
 
     public void setScore(long score) {
         this.score = score;
-    }
-
-    public Timestamp getCreatedAt() {
-        return createdAt;
     }
 
     public void setCreatedAt(Timestamp createdAt) {

@@ -1,15 +1,15 @@
-package menu;
+package component;
 
 import javax.swing.*;
 import java.awt.*;
 
-public abstract class Menu extends JButton {
+public abstract class AbstractMenu extends JButton {
 
-    public Menu(String text) {
+    public AbstractMenu(String text) {
         super(text);
         setBackground(Color.BLACK);
-        setFont(new Font("Courier", Font.BOLD, 12));
         setForeground(Color.white);
+        setFont(new Font("Courier", Font.BOLD, 12));
         setActionListener();
     }
 

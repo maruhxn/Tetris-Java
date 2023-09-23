@@ -44,10 +44,6 @@ public class GameSizeManager {
 
     public static GameSize GAME_SIZE = GameSize.MEDIUM;
 
-    public static GameSize getGameSize() {
-        return GAME_SIZE;
-    }
-
     public static void setGameSize(GameSize gameSize) {
         GAME_SIZE = gameSize;
     }

@@ -8,3 +8,15 @@ create table score
     created_at TIMESTAMP default CURRENT_TIMESTAMP
         primary key (id)
 );
+
+
+---------------------
+
+insert into score(name, score)
+values (?, ?)
+
+----------------------
+
+select *
+from score
+ORDER BY score DESC, created_at ASC LIMIT 30")

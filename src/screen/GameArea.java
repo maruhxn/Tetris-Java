@@ -1,5 +1,6 @@
 package screen;
 
+import component.AbstractArea;
 import unit.block.Block;
 
 import javax.swing.*;
@@ -7,18 +8,15 @@ import java.awt.*;
 
 import static manager.GameSizeManager.GAME_SIZE;
 
-public class GameArea extends JPanel {
+public class GameArea extends AbstractArea {
     private Block currBlock;
     public Color[][] background;
 
     public GameArea() {
         setPreferredSize(new Dimension(GAME_SIZE.getGameAreaWidth(), GAME_SIZE.getHeight()));
-        setBackground(Color.BLACK);
         background = new Color[GAME_SIZE.getHeight()][GAME_SIZE.getGameAreaWidth()];
 
-        SwingUtilities.invokeLater(() -> {
-            this.currBlock = ((GameScreen) getParent()).getCurrBlock();
-        });
+        SwingUtilities.invokeLater(() -> this.currBlock = ((GameScreen) getParent()).getCurrBlock());
     }
 
     @Override

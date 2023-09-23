@@ -1,21 +1,24 @@
 package screen;
 
 import client.GameClient;
+import component.AbstractScreen;
 import manager.GameKeyManager;
 import manager.GameManager;
 import unit.block.*;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.util.Random;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-import static manager.GameSizeManager.*;
+import static manager.GameSizeManager.GAME_SIZE;
 
-public class GameScreen extends Screen {
+public class GameScreen extends AbstractScreen {
     public final GameArea gameArea;
     private final GameInfoArea gameInfoArea;
     private Block currBlock;
@@ -40,9 +43,6 @@ public class GameScreen extends Screen {
         startTimer();
 
         SwingUtilities.invokeLater(() -> {
-            GameClient client = (GameClient) getTopLevelAncestor();
-            System.out.println(client.getContentPane().getSize());
-            System.out.println(client.getSize());
             setKeyListener();
             setFocusable(true);
             requestFocusInWindow();
@@ -50,14 +50,10 @@ public class GameScreen extends Screen {
     }
 
     private void startTimer() {
-        timer = new Timer(1000, new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (!isPaused) {
-                    blockDownCycle();
-                }
+        timer = new Timer(1000, e -> {
+            if (!isPaused) {
+                blockDownCycle();
             }
-
         });
         timer.start();
     }
@@ -109,12 +105,9 @@ public class GameScreen extends Screen {
                 ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
                 resetKeyListeners();
 
-                Runnable task = new Runnable() {
-                    @Override
-                    public void run() {
-                        GameClient client = (GameClient) getTopLevelAncestor();
-                        client.switchPanel(new GameOverScreen());
-                    }
+                Runnable task = () -> {
+                    GameClient client = (GameClient) getTopLevelAncestor();
+                    client.switchPanel(new GameOverScreen());
                 };
                 scheduler.schedule(task, 3, TimeUnit.SECONDS);
             }
@@ -130,10 +123,7 @@ public class GameScreen extends Screen {
     }
 
     private boolean checkBottomCollision() {
-        if (currBlock.getBottomEdge() == GAME_SIZE.getHeight()) {
-            System.out.println(currBlock.getBottomEdge());
-            return true;
-        }
+        if (currBlock.getBottomEdge() == GAME_SIZE.getHeight()) return true;
 
         int[][] blockShape = currBlock.getShape();
         int w = currBlock.getWidth();
