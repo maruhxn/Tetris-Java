@@ -7,7 +7,7 @@ public class GameManager {
     private static final int INITIAL_BLOCK_SPEED = 1000;
     private static int blockDownSpeed = INITIAL_BLOCK_SPEED;
     private static final int increasedSpeedPerClear = 50;
-    private static final int LEVEL_UP_CONDITION_SCORE = 1000;
+    private static final int LEVEL_UP_CONDITION_SCORE = 5000;
     private static final int SPEED_UP_CONDITION_BLOCK_SPAWN_COUNT = 10;
 
     public static int getSpeedUpConditionBlockSpawnCount() {
@@ -20,7 +20,7 @@ public class GameManager {
 
     public static void speedUp() {
         if (blockDownSpeed > 300) {
-            GameManager.blockDownSpeed -= increasedSpeedPerClear;
+            blockDownSpeed -= increasedSpeedPerClear;
         }
     }
 

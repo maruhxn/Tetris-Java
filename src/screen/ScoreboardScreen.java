@@ -6,10 +6,10 @@ import component.Label;
 import component.*;
 
 import javax.swing.*;
-import javax.swing.border.Border;
-import javax.swing.border.CompoundBorder;
-import javax.swing.border.EmptyBorder;
 import java.awt.*;
+
+import static util.Utility.addPadding;
+import static util.Utility.getLargeFont;
 
 public class ScoreboardScreen extends AbstractScreen {
     JLabel label;
@@ -20,7 +20,7 @@ public class ScoreboardScreen extends AbstractScreen {
         setLayout(new BorderLayout());
         // LABEL
         label = new Label("Score Board", SwingConstants.CENTER);
-        label.setFont(new Font("Courier", Font.BOLD, 25));
+        label.setFont(getLargeFont());
 
         // SCOREBOARD
         scoreboard = new Scoreboard();
@@ -36,13 +36,6 @@ public class ScoreboardScreen extends AbstractScreen {
         add(navArea, BorderLayout.SOUTH);
     }
 
-    // TODO: Move to Util class
-    private void addPadding(JComponent component) {
-        Border border = component.getBorder();
-        Border margin = new EmptyBorder(10, 10, 10, 10);
-        component.setBorder(new CompoundBorder(border, margin));
-    }
-
     private static class NavArea extends AbstractArea {
         JButton homeBtn;
 
@@ -50,7 +43,6 @@ public class ScoreboardScreen extends AbstractScreen {
             homeBtn = new Button("메인으로");
 
             homeBtn.addActionListener(e -> {
-                // TODO: Move to Util Class
                 GameClient client = (GameClient) getTopLevelAncestor();
                 client.switchPanel(new MainScreen());
             });

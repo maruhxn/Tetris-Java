@@ -1,5 +1,7 @@
 package client;
 
+import screen.MainScreen;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -15,6 +17,8 @@ public class GameClient extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setResizable(false);
+        setContentPane(new MainScreen());
+        setVisible(true);
     }
 
     public void switchPanel(JPanel newScreen) {

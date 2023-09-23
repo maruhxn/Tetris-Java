@@ -7,6 +7,8 @@ import javax.swing.*;
 import java.awt.*;
 
 import static manager.GameSizeManager.GAME_SIZE;
+import static util.Utility.getLargeFont;
+import static util.Utility.getSmallFont;
 
 public class GameArea extends AbstractArea {
     private Block currBlock;
@@ -46,8 +48,8 @@ public class GameArea extends AbstractArea {
 
         // STATUS TEXT
         g.setColor(Color.WHITE);
-        g.setFont(new Font("Courier", Font.BOLD, 24));
-        g.drawString(((GameScreen) getParent()).setStatus() ? "PAUSE!!" : "PLAYING!", GAME_SIZE.getGameAreaWidth() / 2 - 50, 20);
+        g.setFont(getSmallFont());
+        g.drawString(((GameScreen) getParent()).setStatus() ? "PAUSE!!" : "PLAYING!", GAME_SIZE.getGameAreaWidth() / 2 - 20, 20);
     }
 
     private void drawBackground(Graphics g) {

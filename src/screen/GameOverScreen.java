@@ -9,9 +9,6 @@ import score.Score;
 import score.ScoreDao;
 
 import javax.swing.*;
-import javax.swing.border.Border;
-import javax.swing.border.CompoundBorder;
-import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.text.AbstractDocument;
 import javax.swing.text.AttributeSet;
@@ -21,6 +18,8 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
+
+import static util.Utility.*;
 
 public class GameOverScreen extends AbstractScreen {
     JLabel label;
@@ -32,7 +31,7 @@ public class GameOverScreen extends AbstractScreen {
         setLayout(new BorderLayout());
         // LABEL
         label = new JLabel("GAME OVER!!!", SwingConstants.CENTER);
-        label.setFont(new Font("Courier", Font.BOLD, 25));
+        label.setFont(getLargeFont());
         label.setForeground(Color.white);
 
         // SCORE TABLE
@@ -53,12 +52,6 @@ public class GameOverScreen extends AbstractScreen {
         add(label, BorderLayout.NORTH);
         add(scoreboard.getScrollPane(), BorderLayout.CENTER);
         add(cardPanel, BorderLayout.SOUTH);
-    }
-
-    private void addPadding(JComponent component) {
-        Border border = component.getBorder();
-        Border margin = new EmptyBorder(10, 10, 10, 10);
-        component.setBorder(new CompoundBorder(border, margin));
     }
 
     private static class NavArea extends AbstractArea {
@@ -93,10 +86,10 @@ public class GameOverScreen extends AbstractScreen {
             this.actionListener = new ScoreBoardActionListener();
 
             nameLabel = new Label("NAME : ", SwingConstants.LEFT);
-            nameLabel.setFont(new Font("Courier", Font.BOLD, 15));
+            nameLabel.setFont(getMediumFont());
 
             nameInput = new JTextField(20);
-            nameInput.setFont(new Font("Courier", Font.PLAIN, 15));
+            nameInput.setFont(getMediumFont());
             ((AbstractDocument) nameInput.getDocument()).setDocumentFilter(new DocumentSizeFilter(20)); // 입력 길이 제한
             nameInput.setForeground(Color.YELLOW);
             nameInput.setBackground(Color.BLACK);

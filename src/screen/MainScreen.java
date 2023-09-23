@@ -9,6 +9,8 @@ import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.List;
 
+import static util.Utility.getLargeFont;
+
 public class MainScreen extends AbstractScreen {
     private final List<JButton> menus = new ArrayList<>();
     private int selectedIndex = 0;
@@ -17,7 +19,7 @@ public class MainScreen extends AbstractScreen {
         setLayout(new GridLayout(0, 1));
 
         JLabel gameTitle = new JLabel("TETRIS", SwingConstants.CENTER);
-        gameTitle.setFont(new Font("Courier", Font.BOLD, 25));
+        gameTitle.setFont(getLargeFont());
         gameTitle.setForeground(Color.white);
 
         menus.add(new StartMenu("GAME START"));

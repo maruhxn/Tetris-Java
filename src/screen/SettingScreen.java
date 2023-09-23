@@ -18,6 +18,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static manager.GameSizeManager.*;
+import static util.Utility.addPadding;
+import static util.Utility.getMediumFont;
 
 public class SettingScreen extends AbstractScreen {
     SizeControlArea sizeControlArea;
@@ -51,8 +53,8 @@ public class SettingScreen extends AbstractScreen {
 
         public SizeControlArea() {
             setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-            sizeControlLabel = new Label("화면 크기 조절", SwingConstants.CENTER);
-            sizeControlLabel.setFont(new Font("Courier", Font.BOLD, 18));
+            sizeControlLabel = new Label("화면 크기 조절");
+            sizeControlLabel.setFont(getMediumFont());
             sizeControlLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
             btnArea = new JPanel();
@@ -96,8 +98,9 @@ public class SettingScreen extends AbstractScreen {
             btnArea.add(mediumBtn);
             btnArea.add(largeBtn);
 
+            addPadding(sizeControlLabel);
+
             add(sizeControlLabel);
-            add(Box.createRigidArea(new Dimension(0, 10)));
             add(btnArea);
         }
 
@@ -114,15 +117,13 @@ public class SettingScreen extends AbstractScreen {
 
         public KeyControlArea() {
             setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-            keyControlLabel = new Label("키 설정", SwingConstants.CENTER);
-            keyControlLabel.setFont(new Font("Courier", Font.BOLD, 18));
-
+            keyControlLabel = new Label("키 설정");
+            keyControlLabel.setFont(getMediumFont());
+            keyControlLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+            addPadding(keyControlLabel);
             keySettingArea = new KeySettingArea();
 
-            keyControlLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-
             add(keyControlLabel);
-            add(Box.createRigidArea(new Dimension(0, 10)));
             add(keySettingArea);
         }
 
