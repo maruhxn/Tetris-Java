@@ -3,10 +3,8 @@ package unit.block;
 import unit.Unit;
 
 import java.awt.*;
-import java.util.Arrays;
 
-public class Block extends Unit {
-
+public abstract class Block extends Unit {
     public Block() {
         shape = new int[][]{
                 {1, 1},
@@ -14,7 +12,6 @@ public class Block extends Unit {
         };
         color = Color.YELLOW;
     }
-
 
     public void rotate() {
         int numRows = shape.length;
@@ -45,5 +42,4 @@ public class Block extends Unit {
 
         shape = rotatedShape.clone();
     }
-
 }

@@ -3,14 +3,12 @@ package manager;
 public class GameManager {
     private static int score = 0;
     private static int level = 1;
-    private static int scorePerSecond = 10;
-
+    private static final int scorePerSecond = 10;
     private static final int INITIAL_BLOCK_SPEED = 1000;
     private static int blockDownSpeed = INITIAL_BLOCK_SPEED;
-    private static int minusSpeedPerClear = 50;
-    private static int LEVEL_UP_CONDITION_SCORE = 1000;
-
-    private static int SPEED_UP_CONDITION_BLOCK_SPAWN_COUNT = 10;
+    private static final int increasedSpeedPerClear = 50;
+    private static final int LEVEL_UP_CONDITION_SCORE = 5000;
+    private static final int SPEED_UP_CONDITION_BLOCK_SPAWN_COUNT = 10;
 
     public static int getSpeedUpConditionBlockSpawnCount() {
         return SPEED_UP_CONDITION_BLOCK_SPAWN_COUNT;
@@ -22,7 +20,7 @@ public class GameManager {
 
     public static void speedUp() {
         if (blockDownSpeed > 300) {
-            GameManager.blockDownSpeed -= minusSpeedPerClear;
+            blockDownSpeed -= increasedSpeedPerClear;
         }
     }
 

@@ -1,25 +1,26 @@
 package screen;
 
 import client.GameClient;
+import component.AbstractArea;
+import component.AbstractScreen;
+import component.Button;
+import component.Label;
 import manager.ConfigManager;
 import manager.GameKeyManager;
-import menu.Button;
-import menu.Label;
 import score.ScoreDao;
 
 import javax.swing.*;
 import javax.swing.border.LineBorder;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.List;
 
 import static manager.GameSizeManager.*;
+import static util.Utility.*;
 
-public class SettingScreen extends Screen {
+public class SettingScreen extends AbstractScreen {
     SizeControlArea sizeControlArea;
     KeyControlArea keyControlArea;
     ResetArea resetArea;
@@ -43,79 +44,39 @@ public class SettingScreen extends Screen {
         add(navigateArea);
     }
 
-    private abstract class Area extends JPanel {
-        public Area() {
-            setBackground(Color.BLACK);
-            setForeground(Color.WHITE);
-        }
-
-    }
-
-    private class SizeControlArea extends Area {
+    private static class SizeControlArea extends AbstractArea {
         JLabel sizeControlLabel;
         JPanel btnArea;
-        JButton smallBtn, mediumBtn, largeBtn;
-
-        GameSize selectedSizeSetting = GAME_SIZE;
+        List<JButton> sizeBtns;
+        GameSize selectedSizeSetting;
 
         public SizeControlArea() {
             setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
             sizeControlLabel = new Label("화면 크기 조절");
-            sizeControlLabel.setFont(new Font("Courier", Font.BOLD, 18));
+            sizeControlLabel.setFont(getMediumFont());
             sizeControlLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
             btnArea = new JPanel();
-            btnArea.setLayout(new GridLayout(1, 3));
-            smallBtn = new Button("SMALL");
-            mediumBtn = new Button("MEDIUM");
-            largeBtn = new Button("LARGE");
-
-            if (selectedSizeSetting == GameSize.SMALL) {
-                smallBtn.setBackground(Color.YELLOW);
-            } else if (selectedSizeSetting == GameSize.MEDIUM) {
-                mediumBtn.setBackground(Color.YELLOW);
-            } else if (selectedSizeSetting == GameSize.LARGE) {
-                largeBtn.setBackground(Color.YELLOW);
-            }
+            btnArea.setLayout(new GridLayout(1, 0));
             btnArea.setBackground(Color.BLACK);
             btnArea.setForeground(Color.WHITE);
 
-            smallBtn.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    selectedSizeSetting = GameSize.SMALL;
-                    smallBtn.setBackground(Color.YELLOW);
-                    mediumBtn.setBackground(Color.WHITE);
-                    largeBtn.setBackground(Color.WHITE);
-                }
-            });
+            sizeBtns = new ArrayList<>();
+            sizeBtns.add(new SizeBtn("SMALL", GameSize.SMALL));
+            sizeBtns.add(new SizeBtn("MEDIUM", GameSize.MEDIUM));
+            sizeBtns.add(new SizeBtn("LARGE", GameSize.LARGE));
 
-            mediumBtn.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    selectedSizeSetting = GameSize.MEDIUM;
-                    smallBtn.setBackground(Color.WHITE);
-                    mediumBtn.setBackground(Color.YELLOW);
-                    largeBtn.setBackground(Color.WHITE);
-                }
-            });
+            selectedSizeSetting = GAME_SIZE;
 
-            largeBtn.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    selectedSizeSetting = GameSize.LARGE;
-                    smallBtn.setBackground(Color.WHITE);
-                    mediumBtn.setBackground(Color.WHITE);
-                    largeBtn.setBackground(Color.YELLOW);
-                }
-            });
+            selectAndHighlightBtn(selectedSizeSetting);
 
-            btnArea.add(smallBtn);
-            btnArea.add(mediumBtn);
-            btnArea.add(largeBtn);
+            for (JButton btn : sizeBtns) {
+                btnArea.add(btn);
+            }
+
+            addPadding(sizeControlLabel);
 
             add(sizeControlLabel);
-            add(Box.createRigidArea(new Dimension(0, 10)));
             add(btnArea);
         }
 
@@ -124,28 +85,46 @@ public class SettingScreen extends Screen {
             client.setSize(GAME_SIZE.getWidth() + WINDOW_BORDER, GAME_SIZE.getHeight() + WINDOW_MANAGER_HEIGHT);
             client.revalidate();
         }
+
+        private class SizeBtn extends Button {
+            public SizeBtn(String text, GameSize gameSize) {
+                super(text);
+                addActionListener(e -> selectAndHighlightBtn(gameSize));
+            }
+        }
+
+        private void selectAndHighlightBtn(GameSize gameSize) {
+            selectedSizeSetting = gameSize;
+            for (int i = 0; i < sizeBtns.size(); ++i) {
+                if (i == gameSize.getSizeId()) {
+                    sizeBtns.get(i).setBackground(Color.YELLOW);
+                } else {
+                    sizeBtns.get(i).setBackground(Color.WHITE);
+                }
+            }
+        }
+
     }
 
-    private class KeyControlArea extends Area {
+    private static class KeyControlArea extends AbstractArea {
         JLabel keyControlLabel;
         KeySettingArea keySettingArea;
 
         public KeyControlArea() {
             setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
             keyControlLabel = new Label("키 설정");
-            keyControlLabel.setFont(new Font("Courier", Font.BOLD, 18));
+            keyControlLabel.setFont(getMediumFont());
+            keyControlLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+            addPadding(keyControlLabel);
 
             keySettingArea = new KeySettingArea();
 
-            keyControlLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-
             add(keyControlLabel);
-            add(Box.createRigidArea(new Dimension(0, 10)));
             add(keySettingArea);
         }
 
-        private class KeySettingArea extends JPanel {
-            KeyItem rotateKey, pauseKey, leftKey, rightKey, exitKey, dropKey, superDropKey;
+        private static class KeySettingArea extends JPanel {
             List<KeyItem> keyItemList = new ArrayList<>();
 
             public List<KeyItem> getKeyItemList() {
@@ -178,7 +157,7 @@ public class SettingScreen extends Screen {
                 return new Insets(10, 10, 10, 10);
             }
 
-            public class KeyItem extends JPanel {
+            public static class KeyItem extends JPanel {
                 JLabel label;
                 JTextField field;
                 private int keyCode;
@@ -194,17 +173,17 @@ public class SettingScreen extends Screen {
                 }
 
                 public KeyItem(String labelText, int keyCode, GameKeyManager.GameKeys matchingKey) {
+                    this.keyCode = keyCode;
+                    this.matchingKey = matchingKey;
                     setLayout(new GridLayout(1, 2));
                     setBackground(Color.BLACK);
                     setForeground(Color.WHITE);
-                    label = new Label(labelText);
-                    field = new JTextField();
+                    label = new Label(labelText, SwingConstants.CENTER);
 
+                    field = new JTextField();
                     String keyString = extractKeyStringFromKeyCode(keyCode);
                     field.setText(keyString);
                     field.setEditable(false);
-                    this.keyCode = keyCode;
-                    this.matchingKey = matchingKey;
                     field.addKeyListener(new KeyAdapter() {
                         @Override
                         public void keyPressed(KeyEvent e) {
@@ -213,49 +192,8 @@ public class SettingScreen extends Screen {
                             field.setText(keyString);
                         }
                     });
-
                     add(label);
                     add(field);
-                }
-
-                private static String extractKeyStringFromKeyCode(int keyCode) {
-                    String keyString;
-
-                    switch (keyCode) {
-                        case KeyEvent.VK_SHIFT:
-                            keyString = "SHIFT";
-                            break;
-                        case KeyEvent.VK_ESCAPE:
-                            keyString = "ESC";
-                            break;
-                        case KeyEvent.VK_UP:
-                            keyString = "UP";
-                            break;
-                        case KeyEvent.VK_DOWN:
-                            keyString = "DOWN";
-                            break;
-                        case KeyEvent.VK_LEFT:
-                            keyString = "LEFT";
-                            break;
-                        case KeyEvent.VK_RIGHT:
-                            keyString = "RIGHT";
-                            break;
-                        case KeyEvent.VK_SPACE:
-                            keyString = "SPACE";
-                            break;
-                        default:
-                            char keyChar = (char) keyCode;
-
-                            // keyChar 값이 유효한 문자인지 확인
-                            if (Character.isISOControl(keyChar)) {
-                                // 유효하지 않은 문자일 경우, 빈 문자(공백)으로 대체
-                                keyString = "DON\'t KNOW";
-                            } else {
-                                keyString = String.valueOf(keyChar);
-                            }
-                            break;
-                    }
-                    return keyString;
                 }
             }
 
@@ -263,163 +201,79 @@ public class SettingScreen extends Screen {
 
     }
 
-    private class ResetArea extends Area {
+    private class ResetArea extends AbstractArea {
         JButton scoreBoardResetBtn, settingResetBtn;
 
         public ResetArea() {
             setLayout(new GridLayout(2, 1));
             scoreBoardResetBtn = new Button("스코어보드 초기화");
-            scoreBoardResetBtn.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    int result = JOptionPane.showConfirmDialog(resetArea, "점수를 초기화 하시겠습니까?", "확인", JOptionPane.YES_NO_OPTION);
+            scoreBoardResetBtn.addActionListener(e -> {
+                int result = JOptionPane.showConfirmDialog(resetArea, "점수를 초기화 하시겠습니까?", "확인", JOptionPane.YES_NO_OPTION);
 
-                    if (result == JOptionPane.YES_OPTION) {
-                        ScoreDao scoreDao = new ScoreDao();
-                        scoreDao.deleteAllScores();
-                        JOptionPane.showMessageDialog(resetArea, "점수 초기화 완료");
-                    }
-
+                if (result == JOptionPane.YES_OPTION) {
+                    ScoreDao scoreDao = new ScoreDao();
+                    scoreDao.deleteAllScores();
+                    JOptionPane.showMessageDialog(resetArea, "점수 초기화 완료");
                 }
+
             });
             settingResetBtn = new Button("설정 초기화");
-            settingResetBtn.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    int result = JOptionPane.showConfirmDialog(resetArea, "설정을 초기화 하시겠습니까?", "확인", JOptionPane.YES_NO_OPTION);
+            settingResetBtn.addActionListener(e -> {
+                int result = JOptionPane.showConfirmDialog(resetArea, "설정을 초기화 하시겠습니까?", "확인", JOptionPane.YES_NO_OPTION);
 
-                    if (result == JOptionPane.YES_OPTION) {
-                        // 사이즈 small로 설정
-                        setGameSize(GameSize.MEDIUM);
-                        sizeControlArea.smallBtn.setBackground(Color.WHITE);
-                        sizeControlArea.mediumBtn.setBackground(Color.YELLOW);
-                        sizeControlArea.largeBtn.setBackground(Color.WHITE);
-                        sizeControlArea.selectedSizeSetting = GameSize.MEDIUM;
-                        ConfigManager.setConfigProperty("GAME_SIZE", "MEDIUM");
+                if (result == JOptionPane.YES_OPTION) {
+                    // 사이즈 MEDIUM으로 설정
+                    setGameSize(DEFAULT_GAME_SIZE);
+                    sizeControlArea.selectedSizeSetting = DEFAULT_GAME_SIZE;
+                    sizeControlArea.selectAndHighlightBtn(DEFAULT_GAME_SIZE);
+                    ConfigManager.setConfigProperty("GAME_SIZE", String.valueOf(sizeControlArea.selectedSizeSetting.getSizeId()));
 
-                        // 키는 모두 기본 키로 설정
-                        List<KeyControlArea.KeySettingArea.KeyItem> keyItemList = keyControlArea.keySettingArea.getKeyItemList();
-                        for (KeyControlArea.KeySettingArea.KeyItem keyItem : keyItemList) {
-                            GameKeyManager.GameKeys matchingKey = keyItem.matchingKey;
-                            int keyCode = 0;
-                            if (matchingKey == GameKeyManager.GameKeys.ROTATE_KEY) {
-                                keyCode = KeyEvent.VK_SHIFT;
-                                GameKeyManager.setRotateKey(keyCode);
-                                ConfigManager.setConfigProperty("ROTATE_KEY", String.valueOf(keyCode));
-                                keyItem.field.setText(KeyControlArea.KeySettingArea.KeyItem.extractKeyStringFromKeyCode(keyCode));
-                            } else if (matchingKey == GameKeyManager.GameKeys.GAME_OVER_KEY) {
-                                keyCode = KeyEvent.VK_ESCAPE;
-                                GameKeyManager.setGameOverKey(keyCode);
-                                ConfigManager.setConfigProperty("GAME_OVER_KEY", String.valueOf(keyCode));
-                                keyItem.field.setText(KeyControlArea.KeySettingArea.KeyItem.extractKeyStringFromKeyCode(keyCode));
-                            } else if (matchingKey == GameKeyManager.GameKeys.PAUSE_KEY) {
-                                keyCode = KeyEvent.VK_P;
-                                GameKeyManager.setPauseKey(keyCode);
-                                ConfigManager.setConfigProperty("PAUSE_KEY", String.valueOf(keyCode));
-                                keyItem.field.setText(KeyControlArea.KeySettingArea.KeyItem.extractKeyStringFromKeyCode(keyCode));
-                            } else if (matchingKey == GameKeyManager.GameKeys.SUPER_DROP_KEY) {
-                                keyCode = KeyEvent.VK_SPACE;
-                                GameKeyManager.setSuperDropKey(keyCode);
-                                ConfigManager.setConfigProperty("SUPER_DROP_KEY", String.valueOf(keyCode));
-                                keyItem.field.setText(KeyControlArea.KeySettingArea.KeyItem.extractKeyStringFromKeyCode(keyCode));
-                            } else if (matchingKey == GameKeyManager.GameKeys.MOVE_DOWN_KEY) {
-                                keyCode = KeyEvent.VK_DOWN;
-                                GameKeyManager.setMoveDownKey(keyCode);
-                                ConfigManager.setConfigProperty("MOVE_DOWN_KEY", String.valueOf(keyCode));
-                                keyItem.field.setText(KeyControlArea.KeySettingArea.KeyItem.extractKeyStringFromKeyCode(keyCode));
-                            } else if (matchingKey == GameKeyManager.GameKeys.MOVE_LEFT_KEY) {
-                                keyCode = KeyEvent.VK_LEFT;
-                                GameKeyManager.setMoveLeftKey(keyCode);
-                                ConfigManager.setConfigProperty("MOVE_LEFT_KEY", String.valueOf(keyCode));
-                                keyItem.field.setText(KeyControlArea.KeySettingArea.KeyItem.extractKeyStringFromKeyCode(keyCode));
-                            } else if (matchingKey == GameKeyManager.GameKeys.MOVE_RIGHT_KEY) {
-                                keyCode = KeyEvent.VK_RIGHT;
-                                GameKeyManager.setMoveRightKey(keyCode);
-                                ConfigManager.setConfigProperty("MOVE_RIGHT_KEY", String.valueOf(keyCode));
-                                keyItem.field.setText(KeyControlArea.KeySettingArea.KeyItem.extractKeyStringFromKeyCode(keyCode));
-                            }
-
-                            keyItem.setKeyCode(keyCode);
-                        }
-                        ConfigManager.saveConfig();
-                        sizeControlArea.resizeClient();
-                        JOptionPane.showMessageDialog(resetArea, "설정 초기화 완료");
+                    // 키는 모두 기본 키로 설정
+                    List<KeyControlArea.KeySettingArea.KeyItem> keyItemList = keyControlArea.keySettingArea.getKeyItemList();
+                    for (KeyControlArea.KeySettingArea.KeyItem keyItem : keyItemList) {
+                        GameKeyManager.GameKeys matchingKey = keyItem.matchingKey;
+                        int keyCode = matchingKey.getDefaultKey();
+                        setKey(matchingKey, keyCode);
+                        keyItem.field.setText(extractKeyStringFromKeyCode(keyCode));
+                        keyItem.setKeyCode(keyCode);
                     }
 
+                    ConfigManager.saveConfig();
+                    sizeControlArea.resizeClient();
+                    JOptionPane.showMessageDialog(resetArea, "설정 초기화 완료");
                 }
-            });
 
+            });
             add(scoreBoardResetBtn);
             add(settingResetBtn);
         }
     }
 
-    private class NavArea extends Area {
+    private class NavArea extends AbstractArea {
         JButton mainBtn, saveBtn;
 
         public NavArea() {
             mainBtn = new Button("메인으로");
             saveBtn = new Button("설정 저장");
 
-            saveBtn.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    System.out.println(sizeControlArea.selectedSizeSetting);
-                    switch (sizeControlArea.selectedSizeSetting) {
-                        case SMALL:
-                            ConfigManager.setConfigProperty("GAME_SIZE", "SMALL");
-                            break;
-                        case MEDIUM:
-                            ConfigManager.setConfigProperty("GAME_SIZE", "MEDIUM");
-                            break;
-                        case LARGE:
-                            ConfigManager.setConfigProperty("GAME_SIZE", "LARGE");
-                            break;
-                    }
-
-                    // 키 설정 반영
-                    List<KeyControlArea.KeySettingArea.KeyItem> keyItemList = keyControlArea.keySettingArea.getKeyItemList();
-                    for (KeyControlArea.KeySettingArea.KeyItem keyItem : keyItemList) {
-                        GameKeyManager.GameKeys matchingKey = keyItem.matchingKey;
-                        int keyCode = keyItem.getKeyCode();
-
-                        if (matchingKey == GameKeyManager.GameKeys.ROTATE_KEY) {
-                            GameKeyManager.setRotateKey(keyCode);
-                            ConfigManager.setConfigProperty("ROTATE_KEY", String.valueOf(keyCode));
-                        } else if (matchingKey == GameKeyManager.GameKeys.GAME_OVER_KEY) {
-                            GameKeyManager.setGameOverKey(keyCode);
-                            ConfigManager.setConfigProperty("GAME_OVER_KEY", String.valueOf(keyCode));
-                        } else if (matchingKey == GameKeyManager.GameKeys.PAUSE_KEY) {
-                            GameKeyManager.setPauseKey(keyCode);
-                            ConfigManager.setConfigProperty("PAUSE_KEY", String.valueOf(keyCode));
-                        } else if (matchingKey == GameKeyManager.GameKeys.SUPER_DROP_KEY) {
-                            GameKeyManager.setSuperDropKey(keyCode);
-                            ConfigManager.setConfigProperty("SUPER_DROP_KEY", String.valueOf(keyCode));
-                        } else if (matchingKey == GameKeyManager.GameKeys.MOVE_DOWN_KEY) {
-                            GameKeyManager.setMoveDownKey(keyCode);
-                            ConfigManager.setConfigProperty("MOVE_DOWN_KEY", String.valueOf(keyCode));
-                        } else if (matchingKey == GameKeyManager.GameKeys.MOVE_LEFT_KEY) {
-                            GameKeyManager.setMoveLeftKey(keyCode);
-                            ConfigManager.setConfigProperty("MOVE_LEFT_KEY", String.valueOf(keyCode));
-                        } else if (matchingKey == GameKeyManager.GameKeys.MOVE_RIGHT_KEY) {
-                            GameKeyManager.setMoveRightKey(keyCode);
-                            ConfigManager.setConfigProperty("MOVE_RIGHT_KEY", String.valueOf(keyCode));
-                        }
-
-                        // 사이즈 설정 반영
-                        setGameSize(sizeControlArea.selectedSizeSetting);
-                        ConfigManager.saveConfig();
-                        sizeControlArea.resizeClient();
-                    }
+            saveBtn.addActionListener(e -> {
+                ConfigManager.setConfigProperty("GAME_SIZE", String.valueOf(sizeControlArea.selectedSizeSetting.getSizeId()));
+                // 키 설정 반영
+                List<KeyControlArea.KeySettingArea.KeyItem> keyItemList = keyControlArea.keySettingArea.getKeyItemList();
+                for (KeyControlArea.KeySettingArea.KeyItem keyItem : keyItemList) {
+                    GameKeyManager.GameKeys matchingKey = keyItem.matchingKey;
+                    int keyCode = keyItem.getKeyCode();
+                    setKey(matchingKey, keyCode);
                 }
+                // 사이즈 설정 반영
+                setGameSize(sizeControlArea.selectedSizeSetting);
+                ConfigManager.saveConfig();
+                sizeControlArea.resizeClient();
             });
 
-            mainBtn.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    GameClient client = (GameClient) getTopLevelAncestor();
-                    client.switchPanel(new MainScreen());
-                }
+            mainBtn.addActionListener(e -> {
+                GameClient client = (GameClient) getTopLevelAncestor();
+                client.switchPanel(new MainScreen());
             });
 
             add(mainBtn);

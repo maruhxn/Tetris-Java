@@ -24,16 +24,16 @@ public class ScoreDao {
 
             ps.execute();
 
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        } catch (SQLException e) {
+        } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();
         } finally {
             if (c != null) {
                 try {
                     c.close();
-                    ps.close();
-                } catch (SQLException e) {
+                    if (ps != null) {
+                        ps.close();
+                    }
+                } catch (SQLException ignored) {
                 }
             }
         }
@@ -55,16 +55,16 @@ public class ScoreDao {
 
             ps.execute();
 
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        } catch (SQLException e) {
+        } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();
         } finally {
             if (c != null) {
                 try {
                     c.close();
-                    ps.close();
-                } catch (SQLException e) {
+                    if (ps != null) {
+                        ps.close();
+                    }
+                } catch (SQLException ignored) {
                 }
             }
         }
@@ -97,21 +97,23 @@ public class ScoreDao {
             }
 
 
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        } catch (SQLException e) {
+        } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();
         } finally {
             if (c != null) {
                 try {
-                    rs.close();
-                    ps.close();
+                    if (rs != null) {
+                        rs.close();
+                    }
+                    if (ps != null) {
+                        ps.close();
+                    }
                     c.close();
-                } catch (SQLException e) {
+                } catch (SQLException ignored) {
                 }
             }
-            return scoreList;
         }
+        return scoreList;
     }
 
     public void deleteAllScores() {
@@ -127,16 +129,16 @@ public class ScoreDao {
 
             ps.execute();
 
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        } catch (SQLException e) {
+        } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();
         } finally {
             if (c != null) {
                 try {
                     c.close();
-                    ps.close();
-                } catch (SQLException e) {
+                    if (ps != null) {
+                        ps.close();
+                    }
+                } catch (SQLException ignored) {
                 }
             }
         }

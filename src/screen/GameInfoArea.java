@@ -1,5 +1,6 @@
 package screen;
 
+import component.AbstractArea;
 import manager.GameManager;
 import unit.block.Block;
 
@@ -7,23 +8,20 @@ import javax.swing.*;
 import javax.swing.border.LineBorder;
 import java.awt.*;
 
-import static manager.GameSizeManager.*;
+import static manager.GameSizeManager.GAME_SIZE;
 
-public class GameInfoArea extends JPanel {
+public class GameInfoArea extends AbstractArea {
     private Block nextBlock;
 
     public GameInfoArea() {
         setPreferredSize(new Dimension(GAME_SIZE.getInfoAreaWidth(), GAME_SIZE.getHeight()));
         setLayout(new GridLayout(0, 1));
-        setBackground(Color.BLUE);
         add(new NextBlockArea());
         add(new ScoreArea());
-        SwingUtilities.invokeLater(() -> {
-            this.nextBlock = ((GameScreen) getParent()).getNextBlock();
-        });
+        SwingUtilities.invokeLater(() -> this.nextBlock = ((GameScreen) getParent()).getNextBlock());
     }
 
-    public class NextBlockArea extends JPanel {
+    public class NextBlockArea extends AbstractArea {
         public NextBlockArea() {
             LineBorder border = (LineBorder) BorderFactory.createLineBorder(Color.DARK_GRAY, 5);
             setBorder(border);
@@ -33,7 +31,7 @@ public class GameInfoArea extends JPanel {
         @Override
         public void paint(Graphics g) {
             super.paint(g);
-            Component gameInfoArea = ((GameInfoArea) getParent());
+            Component gameInfoArea = getParent();
             nextBlock = ((GameScreen) gameInfoArea.getParent()).getNextBlock();
             Graphics2D g2d = (Graphics2D) g;
 
@@ -42,7 +40,7 @@ public class GameInfoArea extends JPanel {
                 int blockWidth = nextBlock.getWidth();
                 int blockHeight = nextBlock.getHeight();
                 g2d.setColor(nextBlock.getColor());
-                
+
                 int middleX = getWidth() / 2 - (blockWidth - 2) * GAME_SIZE.getBlockCellSize();
                 int middleY = GAME_SIZE.getInfoAreaWidth() / 2 - (blockHeight - 1) * GAME_SIZE.getBlockCellSize();
                 for (int i = 0; i < blockHeight; ++i) {
@@ -56,9 +54,9 @@ public class GameInfoArea extends JPanel {
         }
     }
 
-    public class ScoreArea extends JPanel {
-        private JLabel scoreLabel;
-        private JLabel levelLable;
+    public static class ScoreArea extends AbstractArea {
+        private final JLabel scoreLabel;
+        private final JLabel levelLabel;
 
         public ScoreArea() {
             setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
@@ -66,20 +64,20 @@ public class GameInfoArea extends JPanel {
             setBorder(border);
             setBackground(Color.GRAY);
 
-            levelLable = new JLabel();
+            levelLabel = new JLabel();
             scoreLabel = new JLabel("0");
 
-            add(levelLable);
+            add(levelLabel);
             add(scoreLabel);
 
-            levelLable.setAlignmentX(Component.CENTER_ALIGNMENT);
+            levelLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
             scoreLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         }
 
         @Override
         public void paint(Graphics g) {
             super.paint(g);
-            levelLable.setText("LEVEL : " + String.valueOf(GameManager.getLevel()));
+            levelLabel.setText("LEVEL : " + GameManager.getLevel());
             scoreLabel.setText(String.valueOf(GameManager.getScore()));
         }
     }

@@ -1,16 +1,15 @@
 package screen;
 
 import client.GameClient;
+import component.Button;
+import component.Label;
+import component.*;
 import manager.GameManager;
 import score.Score;
 import score.ScoreDao;
 
 import javax.swing.*;
-import javax.swing.border.Border;
-import javax.swing.border.CompoundBorder;
-import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.DefaultTableModel;
 import javax.swing.text.AbstractDocument;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
@@ -20,46 +19,26 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
 
-public class GameOverScreen extends Screen {
+import static util.Utility.*;
+
+public class GameOverScreen extends AbstractScreen {
     JLabel label;
-    JTable scoreTable;
+    Scoreboard scoreboard;
     JPanel cardPanel;
     CardLayout cardLayout;
-    DefaultTableModel tableModel;
-    ScoreDao scoreDao;
-    List<Score> scoreList;
 
     public GameOverScreen() {
         setLayout(new BorderLayout());
         // LABEL
         label = new JLabel("GAME OVER!!!", SwingConstants.CENTER);
-        label.setFont(new Font("Courier", Font.BOLD, 25));
+        label.setFont(getLargeFont());
         label.setForeground(Color.white);
-        Border border = label.getBorder();
-        Border margin = new EmptyBorder(10, 10, 10, 10);
-        label.setBorder(new CompoundBorder(border, margin));
 
         // SCORE TABLE
-        String[] columnNames = {"순위", "이름", "점수"};
-        scoreDao = new ScoreDao();
-        tableModel = new DefaultTableModel(columnNames, 0);
-        scoreTable = new JTable(tableModel);
-        JScrollPane scrollPane = new JScrollPane(scoreTable);
-        JViewport viewport = scrollPane.getViewport();
-        scoreTable.setShowGrid(true);
-        viewport.setForeground(Color.WHITE);
-        viewport.setBackground(Color.BLACK);
-        scrollPane.setBorder(null);
-        scoreTable.setForeground(Color.WHITE);
-        scoreTable.setBackground(Color.BLACK);
-        Border tableBorder = scoreTable.getBorder();
-        Border tableMargin = new EmptyBorder(10, 10, 10, 10);
-        scoreTable.setBorder(new CompoundBorder(tableBorder, tableMargin));
-
-        initTableData();
+        scoreboard = new Scoreboard();
+        scoreboard.initTableData();
 
         cardPanel = new JPanel(new CardLayout());
-        // CardLayout에 패널 추가
         cardPanel.add(new InputArea(), "input");
         cardPanel.add(new NavArea(), "nav");
 
@@ -67,53 +46,27 @@ public class GameOverScreen extends Screen {
         cardLayout = (CardLayout) cardPanel.getLayout();
         cardLayout.show(cardPanel, "input");
 
+        addPadding(label);
+        addPadding(scoreboard);
+
         add(label, BorderLayout.NORTH);
-        add(scrollPane, BorderLayout.CENTER);
+        add(scoreboard.getScrollPane(), BorderLayout.CENTER);
         add(cardPanel, BorderLayout.SOUTH);
     }
 
-    private void initTableData() {
-        tableModel.setRowCount(0);
-        scoreList = scoreDao.getTop10();
-        for (int i = 0; i < scoreList.size(); ++i) {
-            Score score = scoreList.get(i);
-            Object record[] = new Object[3];
-            record[0] = i + 1; // 순위
-            record[1] = score.getName();
-            record[2] = score.getScore();
-            tableModel.addRow(record);
-        }
-    }
-
-    private class NavArea extends JPanel {
+    private static class NavArea extends AbstractArea {
         JButton homeBtn;
         JButton exitBtn;
 
         public NavArea() {
-            setBackground(Color.BLACK);
+            homeBtn = new Button("메인으로");
+            exitBtn = new Button("게임 종료");
 
-            homeBtn = new JButton("메인으로");
-            exitBtn = new JButton("게임 종료");
-
-            homeBtn.setBackground(Color.WHITE);
-            exitBtn.setBackground(Color.WHITE);
-            homeBtn.setForeground(Color.BLACK);
-            exitBtn.setForeground(Color.BLACK);
-
-            homeBtn.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    GameClient client = (GameClient) getTopLevelAncestor();
-                    client.switchPanel(new MainScreen());
-                }
+            homeBtn.addActionListener(e -> {
+                GameClient client = (GameClient) getTopLevelAncestor();
+                client.switchPanel(new MainScreen());
             });
-
-            exitBtn.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    System.exit(0);
-                }
-            });
+            exitBtn.addActionListener(e -> System.exit(0));
 
             add(homeBtn);
             add(exitBtn);
@@ -121,23 +74,22 @@ public class GameOverScreen extends Screen {
 
     }
 
-    private class InputArea extends JPanel {
+    private class InputArea extends AbstractArea {
         JLabel nameLabel;
         JTextField nameInput;
         JButton okBtn;
         ActionListener actionListener;
 
         public InputArea() {
-            setBackground(Color.BLACK);
             setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
+
             this.actionListener = new ScoreBoardActionListener();
 
-            nameLabel = new JLabel("NAME : ", SwingConstants.LEFT);
-            nameLabel.setFont(new Font("Courier", Font.BOLD, 15));
-            nameLabel.setForeground(Color.white);
+            nameLabel = new Label("NAME : ", SwingConstants.LEFT);
+            nameLabel.setFont(getMediumFont());
 
             nameInput = new JTextField(20);
-            nameInput.setFont(new Font("Courier", Font.PLAIN, 15));
+            nameInput.setFont(getMediumFont());
             ((AbstractDocument) nameInput.getDocument()).setDocumentFilter(new DocumentSizeFilter(20)); // 입력 길이 제한
             nameInput.setForeground(Color.YELLOW);
             nameInput.setBackground(Color.BLACK);
@@ -155,8 +107,8 @@ public class GameOverScreen extends Screen {
         }
 
         // 입력 길이를 제한하는 DocumentFilter
-        class DocumentSizeFilter extends DocumentFilter {
-            private int maxCharacters;
+        static class DocumentSizeFilter extends DocumentFilter {
+            private final int maxCharacters;
 
             public DocumentSizeFilter(int maxChars) {
                 maxCharacters = maxChars;
@@ -188,14 +140,17 @@ public class GameOverScreen extends Screen {
                 Score score = new Score();
                 score.setName(inputText);
                 score.setScore(GameManager.getScore());
+
+                ScoreDao scoreDao = new ScoreDao();
                 scoreDao.addResult(score);
 
-                initTableData();
+                scoreboard.initTableData();
 
+                List<Score> scoreList = scoreboard.getScoreList();
                 for (int i = 0; i < scoreList.size(); ++i) {
                     Score s = scoreList.get(i);
-                    if (s.getScore() == score.getScore() && s.getName() == score.getName()) {
-                        highlightTableRow(scoreTable, i + 1);
+                    if (s.getScore() == score.getScore() && s.getName().equals(score.getName())) {
+                        highlightTableRow(scoreboard, i + 1);
                     }
                 }
 

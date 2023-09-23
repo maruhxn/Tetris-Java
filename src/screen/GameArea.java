@@ -1,24 +1,23 @@
 package screen;
 
+import component.AbstractArea;
 import unit.block.Block;
 
 import javax.swing.*;
 import java.awt.*;
 
 import static manager.GameSizeManager.GAME_SIZE;
+import static util.Utility.getSmallFont;
 
-public class GameArea extends JPanel {
+public class GameArea extends AbstractArea {
     private Block currBlock;
     public Color[][] background;
 
     public GameArea() {
         setPreferredSize(new Dimension(GAME_SIZE.getGameAreaWidth(), GAME_SIZE.getHeight()));
-        setBackground(Color.BLACK);
         background = new Color[GAME_SIZE.getHeight()][GAME_SIZE.getGameAreaWidth()];
 
-        SwingUtilities.invokeLater(() -> {
-            this.currBlock = ((GameScreen) getParent()).getCurrBlock();
-        });
+        SwingUtilities.invokeLater(() -> this.currBlock = ((GameScreen) getParent()).getCurrBlock());
     }
 
     @Override
@@ -48,8 +47,8 @@ public class GameArea extends JPanel {
 
         // STATUS TEXT
         g.setColor(Color.WHITE);
-        g.setFont(new Font("Courier", Font.BOLD, 24));
-        g.drawString(((GameScreen) getParent()).setStatus() ? "PAUSE!!" : "PLAYING!", GAME_SIZE.getGameAreaWidth() / 2 - 50, 20);
+        g.setFont(getSmallFont());
+        g.drawString(((GameScreen) getParent()).getStatus() ? "PAUSE!!" : "PLAYING!", GAME_SIZE.getGameAreaWidth() / 2 - 20, 20);
     }
 
     private void drawBackground(Graphics g) {

@@ -1,28 +1,27 @@
 package screen;
 
 import client.GameClient;
+import component.AbstractScreen;
 import manager.GameKeyManager;
 import manager.GameManager;
 import unit.block.*;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.util.Random;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
-import static manager.GameSizeManager.*;
+import static manager.GameSizeManager.GAME_SIZE;
 
-public class GameScreen extends Screen {
+public class GameScreen extends AbstractScreen {
     public final GameArea gameArea;
     private final GameInfoArea gameInfoArea;
     private Block currBlock;
     private Block nextBlock;
     private Timer timer;
     private boolean isPaused = false;
-
     private int blockSpawnCnt;
 
 
@@ -40,9 +39,6 @@ public class GameScreen extends Screen {
         startTimer();
 
         SwingUtilities.invokeLater(() -> {
-            GameClient client = (GameClient) getTopLevelAncestor();
-            System.out.println(client.getContentPane().getSize());
-            System.out.println(client.getSize());
             setKeyListener();
             setFocusable(true);
             requestFocusInWindow();
@@ -50,14 +46,10 @@ public class GameScreen extends Screen {
     }
 
     private void startTimer() {
-        timer = new Timer(1000, new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (!isPaused) {
-                    blockDownCycle();
-                }
+        timer = new Timer(1000, e -> {
+            if (!isPaused) {
+                blockDownCycle();
             }
-
         });
         timer.start();
     }
@@ -65,7 +57,6 @@ public class GameScreen extends Screen {
     private void blockDownCycle() {
         moveDown();
         GameManager.checkLevelUp();
-        checkGameOver();
         gameArea.repaint();
         gameInfoArea.repaint();
     }
@@ -101,24 +92,14 @@ public class GameScreen extends Screen {
         timer.setDelay(GameManager.getBlockDownSpeed());
     }
 
-    private void checkGameOver() {
+    private boolean checkGameOver() {
         // (0, 0~400)에 블럭이 있다면 게임 오버.
         for (int i = 0; i < GAME_SIZE.getGameAreaWidth(); i = i + GAME_SIZE.getBlockCellSize()) {
             if (gameArea.background[0][i] != null) {
-                timer.stop();
-                ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
-                resetKeyListeners();
-
-                Runnable task = new Runnable() {
-                    @Override
-                    public void run() {
-                        GameClient client = (GameClient) getTopLevelAncestor();
-                        client.switchPanel(new GameOverScreen());
-                    }
-                };
-                scheduler.schedule(task, 3, TimeUnit.SECONDS);
+                return true;
             }
         }
+        return false;
     }
 
     public Block getNextBlock() {
@@ -130,10 +111,7 @@ public class GameScreen extends Screen {
     }
 
     private boolean checkBottomCollision() {
-        if (currBlock.getBottomEdge() == GAME_SIZE.getHeight()) {
-            System.out.println(currBlock.getBottomEdge());
-            return true;
-        }
+        if (currBlock.getBottomEdge() == GAME_SIZE.getHeight()) return true;
 
         int[][] blockShape = currBlock.getShape();
         int w = currBlock.getWidth();
@@ -225,13 +203,29 @@ public class GameScreen extends Screen {
 
     private void moveDown() {
         if (checkBottomCollision()) {
-            moveBlockToBackground();
-            checkClearLine();
-            getNextBlockToCurr();
-            return;
+            collisionProcessing();
+        } else {
+            currBlock.moveDown();
+            GameManager.addScorePerSecond();
         }
-        currBlock.moveDown();
-        GameManager.addScorePerSecond();
+    }
+
+    private void collisionProcessing() {
+        moveBlockToBackground();
+        checkClearLine();
+        if (checkGameOver()) {
+            gameOver();
+        } else {
+            getNextBlockToCurr();
+        }
+    }
+
+    private void gameOver() {
+        timer.stop();
+        JOptionPane.showMessageDialog(this, "GAME OVER!");
+        resetKeyListeners();
+        GameClient client = (GameClient) getTopLevelAncestor();
+        client.switchPanel(new GameOverScreen());
     }
 
     private void moveLeft() {
@@ -297,14 +291,10 @@ public class GameScreen extends Screen {
                 else if (e.getKeyCode() == superDropKey) superDrop();
                 else if (e.getKeyCode() == rotateKey) rotateBlock();
                 else if (e.getKeyCode() == pauseKey) pause();
-                else if (e.getKeyCode() == gameOverKey) forceExit();
+                else if (e.getKeyCode() == gameOverKey) gameOver();
 
             }
         });
-    }
-
-    private void forceExit() {
-        System.exit(0);
     }
 
     private void pause() {
@@ -380,7 +370,7 @@ public class GameScreen extends Screen {
         this.nextBlock = nextBlock;
     }
 
-    public boolean setStatus() {
+    public boolean getStatus() {
         return this.isPaused;
     }
 

@@ -1,9 +1,6 @@
 package screen;
 
-import menu.ExitMenu;
-import menu.ScoreboardMenu;
-import menu.SettingMenu;
-import menu.StartMenu;
+import component.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -12,23 +9,26 @@ import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainScreen extends Screen {
-    private final List<JButton> menus = new ArrayList<>();
+import static util.Utility.getLargeFont;
 
+public class MainScreen extends AbstractScreen {
+    private final List<JButton> menus = new ArrayList<>();
     private int selectedIndex = 0;
 
     public MainScreen() {
-        setLayout(new GridLayout(5, 1));
+        setLayout(new GridLayout(0, 1));
 
         JLabel gameTitle = new JLabel("TETRIS", SwingConstants.CENTER);
-        add(gameTitle);
-        gameTitle.setFont(new Font("Courier", Font.BOLD, 25));
+        gameTitle.setFont(getLargeFont());
         gameTitle.setForeground(Color.white);
 
         menus.add(new StartMenu("GAME START"));
         menus.add(new SettingMenu("SETTING"));
         menus.add(new ScoreboardMenu("SCORE BOARD"));
         menus.add(new ExitMenu("EXIT"));
+
+        // Add Component
+        add(gameTitle);
 
         for (JButton menu : this.menus) {
             add(menu);

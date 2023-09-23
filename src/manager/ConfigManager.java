@@ -11,20 +11,18 @@ public class ConfigManager {
         configProperties = new Properties();
         try (InputStream inputStream = new FileInputStream(System.getProperty("user.dir") + "\\" + CONFIG_FILE)) {
             configProperties.load(inputStream);
+
             // SIZE Setting
             String gameSize = configProperties.getProperty("GAME_SIZE");
             switch (gameSize) {
-                case "SMALL":
+                case "0":
                     GameSizeManager.GAME_SIZE = GameSizeManager.GameSize.SMALL;
                     break;
-                case "MEDIUM":
+                case "1":
                     GameSizeManager.GAME_SIZE = GameSizeManager.GameSize.MEDIUM;
                     break;
-                case "LARGE":
+                case "2":
                     GameSizeManager.GAME_SIZE = GameSizeManager.GameSize.LARGE;
-                    break;
-                default:
-                    GameSizeManager.GAME_SIZE = GameSizeManager.GameSize.MEDIUM;
                     break;
             }
 

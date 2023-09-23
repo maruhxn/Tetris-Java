@@ -5,7 +5,6 @@ import java.awt.*;
 import static manager.GameSizeManager.GAME_SIZE;
 
 public abstract class Unit {
-
     protected int x;
     protected int y;
 
@@ -25,10 +24,6 @@ public abstract class Unit {
 
     public int getY() {
         return y;
-    }
-
-    public void setY(int y) {
-        this.y = y;
     }
 
     public Color getColor() {

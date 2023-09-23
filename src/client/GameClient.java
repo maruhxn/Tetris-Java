@@ -1,8 +1,8 @@
 package client;
 
+import screen.MainScreen;
+
 import javax.swing.*;
-import javax.swing.text.SimpleAttributeSet;
-import javax.swing.text.StyleConstants;
 import java.awt.*;
 
 import static manager.GameSizeManager.*;
@@ -10,7 +10,6 @@ import static manager.GameSizeManager.*;
 
 public class GameClient extends JFrame {
     public GameClient() {
-
         // JFrame Setting
         super("TETRIS");
         setSize(GAME_SIZE.getWidth() + WINDOW_BORDER, GAME_SIZE.getHeight() + WINDOW_MANAGER_HEIGHT);
@@ -18,14 +17,8 @@ public class GameClient extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setResizable(false);
-
-        //Document default style.
-        SimpleAttributeSet styleSet = new SimpleAttributeSet();
-        StyleConstants.setFontSize(styleSet, 18);
-        StyleConstants.setFontFamily(styleSet, "Courier");
-        StyleConstants.setBold(styleSet, true);
-        StyleConstants.setForeground(styleSet, Color.WHITE);
-        StyleConstants.setAlignment(styleSet, StyleConstants.ALIGN_CENTER);
+        setContentPane(new MainScreen());
+        setVisible(true);
     }
 
     public void switchPanel(JPanel newScreen) {

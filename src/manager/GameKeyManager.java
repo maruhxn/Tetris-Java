@@ -3,18 +3,27 @@ package manager;
 import java.awt.event.KeyEvent;
 
 public class GameKeyManager {
-
     public enum GameKeys {
-        ROTATE_KEY, PAUSE_KEY, MOVE_LEFT_KEY, MOVE_RIGHT_KEY, MOVE_DOWN_KEY, SUPER_DROP_KEY, GAME_OVER_KEY
+        ROTATE_KEY(KeyEvent.VK_SHIFT), PAUSE_KEY(KeyEvent.VK_P), MOVE_LEFT_KEY(KeyEvent.VK_LEFT), MOVE_RIGHT_KEY(KeyEvent.VK_RIGHT), MOVE_DOWN_KEY(KeyEvent.VK_DOWN), SUPER_DROP_KEY(KeyEvent.VK_SPACE), GAME_OVER_KEY(KeyEvent.VK_ESCAPE);
+
+        private final int defaultKey;
+
+        GameKeys(int defaultKey) {
+            this.defaultKey = defaultKey;
+        }
+
+        public int getDefaultKey() {
+            return defaultKey;
+        }
     }
 
-    private static int ROTATE_KEY = KeyEvent.VK_SHIFT;
-    private static int PAUSE_KEY = KeyEvent.VK_P;
-    private static int MOVE_LEFT_KEY = KeyEvent.VK_LEFT;
-    private static int MOVE_RIGHT_KEY = KeyEvent.VK_RIGHT;
-    private static int MOVE_DOWN_KEY = KeyEvent.VK_DOWN;
-    private static int SUPER_DROP_KEY = KeyEvent.VK_SPACE;
-    private static int GAME_OVER_KEY = KeyEvent.VK_ESCAPE;
+    private static int ROTATE_KEY = GameKeys.ROTATE_KEY.defaultKey;
+    private static int PAUSE_KEY = GameKeys.PAUSE_KEY.defaultKey;
+    private static int MOVE_LEFT_KEY = GameKeys.MOVE_LEFT_KEY.defaultKey;
+    private static int MOVE_RIGHT_KEY = GameKeys.MOVE_RIGHT_KEY.defaultKey;
+    private static int MOVE_DOWN_KEY = GameKeys.MOVE_DOWN_KEY.defaultKey;
+    private static int SUPER_DROP_KEY = GameKeys.SUPER_DROP_KEY.defaultKey;
+    private static int GAME_OVER_KEY = GameKeys.GAME_OVER_KEY.defaultKey;
 
     public static int getRotateKey() {
         return ROTATE_KEY;
