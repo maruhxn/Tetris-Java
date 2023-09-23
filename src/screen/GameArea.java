@@ -7,7 +7,6 @@ import javax.swing.*;
 import java.awt.*;
 
 import static manager.GameSizeManager.GAME_SIZE;
-import static util.Utility.getLargeFont;
 import static util.Utility.getSmallFont;
 
 public class GameArea extends AbstractArea {
@@ -49,7 +48,7 @@ public class GameArea extends AbstractArea {
         // STATUS TEXT
         g.setColor(Color.WHITE);
         g.setFont(getSmallFont());
-        g.drawString(((GameScreen) getParent()).setStatus() ? "PAUSE!!" : "PLAYING!", GAME_SIZE.getGameAreaWidth() / 2 - 20, 20);
+        g.drawString(((GameScreen) getParent()).getStatus() ? "PAUSE!!" : "PLAYING!", GAME_SIZE.getGameAreaWidth() / 2 - 20, 20);
     }
 
     private void drawBackground(Graphics g) {
