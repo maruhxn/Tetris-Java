@@ -3,6 +3,7 @@ package manager;
 public class GameSizeManager {
     public static final int WINDOW_BORDER = 16;
     public static final int WINDOW_MANAGER_HEIGHT = 39;
+    public static final GameSize DEFAULT_GAME_SIZE = GameSize.MEDIUM;
 
     public enum GameSize {
         SMALL(0, 300, 400, 20, 100, 200), MEDIUM(1, 600, 800, 40, 200, 400), LARGE(2, 750, 1000, 50, 250, 500);
