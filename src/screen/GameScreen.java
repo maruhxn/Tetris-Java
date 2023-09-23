@@ -16,7 +16,7 @@ import java.util.Random;
 import static manager.GameSizeManager.GAME_SIZE;
 
 public class GameScreen extends AbstractScreen {
-    public final GameArea gameArea;
+    private final GameArea gameArea;
     private final GameInfoArea gameInfoArea;
     private Block currBlock;
     private Block nextBlock;
@@ -33,7 +33,6 @@ public class GameScreen extends AbstractScreen {
         gameInfoArea = new GameInfoArea();
 
         add(gameArea, BorderLayout.WEST);
-
         add(gameInfoArea, BorderLayout.EAST);
 
         startTimer();
@@ -56,7 +55,7 @@ public class GameScreen extends AbstractScreen {
 
     private void blockDownCycle() {
         moveDown();
-        GameManager.checkLevelUp();
+        GameManager.levelUp();
         gameArea.repaint();
         gameInfoArea.repaint();
     }
@@ -76,14 +75,12 @@ public class GameScreen extends AbstractScreen {
     }
 
     private int clearLine(int y) {
-        gameArea.background[y] = new Color[GAME_SIZE.getGameAreaWidth()];
+        gameArea.background[0] = new Color[GAME_SIZE.getGameAreaWidth()];
         for (int i = y; i > 0; i -= GAME_SIZE.getBlockCellSize()) {
             gameArea.background[i] = gameArea.background[i - GAME_SIZE.getBlockCellSize()];
         }
         y += GAME_SIZE.getBlockCellSize();
         speedUp();
-        gameArea.repaint();
-        gameInfoArea.repaint();
         return y;
     }
 
@@ -243,6 +240,7 @@ public class GameScreen extends AbstractScreen {
     }
 
     private void moveBlockToBackground() {
+
         int[][] shape = currBlock.getShape();
         int h = currBlock.getHeight();
         int w = currBlock.getWidth();
@@ -269,7 +267,7 @@ public class GameScreen extends AbstractScreen {
 
         int addedScore = (endY - startY) / GAME_SIZE.getBlockCellSize() * GameManager.getScorePerSecond();
         GameManager.addScore(addedScore);
-        moveBlockToBackground();
+        collisionProcessing();
         gameArea.repaint();
     }
 
